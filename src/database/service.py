@@ -1,0 +1,81 @@
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import func
+
+from datetime import datetime
+
+from .session import get_session
+from .models.media import Media
+from .models.article import Article
+from src.scrapper.scrappers.base_scrapper import ArticleInfo
+
+def get_media() -> list[Media]:
+    """Gets all media sites marked as 'is_active'.
+    Used for taking sitemaps and associating articles
+    to their separate media"""
+
+    session = get_session()
+
+    try:
+        medias = session.query(Media).filter(Media.is_active == True).all()
+        return medias
+
+    except SQLAlchemyError as error:
+        print(error) # TODO: log this
+        return []
+
+    finally:
+        session.close()
+
+def get_last_published_date(media: Media) -> datetime | None:
+    """Finds last published date of article of media.
+    Used for finding from what point to start new scraping"""
+
+    session = get_session()
+
+    try:
+        last_published_date = (
+            session.query(func.max(Article.published_at))
+            .filter(Article.media_id == media.id)
+            .scalar()
+        )
+
+        if last_published_date:
+            return last_published_date
+
+        return None
+
+    except SQLAlchemyError as error:
+        print(error)  # TODO: log this
+        return None
+
+    finally:
+        session.close()
+
+
+def post_article(article_tuple: ArticleInfo) -> None:
+    """Saves a single article to the database.
+    Takes custom tuple with parsed elements of article and inserts
+    data to database"""
+
+    article = Article(
+        link = article_tuple.link,
+        title = article_tuple.title,
+        featured_image_url= article_tuple.featured_image_url,
+        author = article_tuple.author,
+        published_at = article_tuple.published_at,
+        content = article_tuple.content,
+        media_id = article_tuple.media_id,
+    )
+    session = get_session()
+
+    try:
+
+        session.add(article)
+        session.commit()
+
+    except SQLAlchemyError as error:
+        print(error) #TODO: log this
+        session.rollback()
+
+    finally:
+        session.close()
