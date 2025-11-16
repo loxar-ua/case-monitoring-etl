@@ -16,7 +16,7 @@ class Article(Base):
     featured_image_url: Mapped[str] = mapped_column(String, nullable=True)
     author: Mapped[str] = mapped_column(String, nullable=True)
     content: Mapped[str] = mapped_column(String)
-    published_at: Mapped[datetime] = mapped_column(DateTime)
+    published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     embedding: Mapped[list] = mapped_column(Vector(1), default=None, nullable=True) #TODO: change dimension size and list type
     is_relevant: Mapped[bool] = mapped_column(Boolean, default=False)
 

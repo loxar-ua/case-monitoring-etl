@@ -7,7 +7,6 @@ from unittest import mock
 
 from src.database.session import get_connection, get_session
 
-
 @mock.patch.dict(os.environ, {
         "DATABASE_NAME": "test_db",
         "DATABASE_USER": "test_user",
@@ -41,7 +40,6 @@ class TestSessionCase(unittest.TestCase):
         """Checks that get_session uses determined url"""
         session = get_session("postgresql://user:pass@localhost/predetermined_db")
         self.assertEqual(session.bind.url.database,  "predetermined_db")
-
 
 
 if __name__ == "__main__":

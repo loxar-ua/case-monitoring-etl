@@ -2,19 +2,15 @@ from bs4 import BeautifulSoup
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from collections import namedtuple
+from src.scrapper.scrappers import ArticleInfo
 
-ArticleInfo = namedtuple(
-    "ArticleInfo",
-    ["link", "title", "featured_image_url", "author", "published_at", "content"]
-)
+from src.database.models.media import Media
 
 class BaseScrapper(ABC):
-    def __init__(self, name, sitemap_index_url, **kwargs):
+    def __init__(self, media_orm: Media, **kwargs):
         super().__init__(**kwargs)
 
-        self.name = name
-        self.sitemap_index_url = sitemap_index_url
+        self.media_orm = media_orm
 
     @abstractmethod
     def get_links(self, start_date: datetime, end_date: datetime) -> list[str]:
@@ -65,6 +61,7 @@ class BaseScrapper(ABC):
             self._get_author(soup),
             self._get_published_at(soup),
             self._get_content(soup),
+            self.media_orm.id
         )
 
         return article_data

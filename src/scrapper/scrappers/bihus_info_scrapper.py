@@ -7,7 +7,7 @@ import re
 
 from .base_scrapper import BaseScrapper
 from src.utils.get_response import get_response
-from src.utils.normalize_text import normalise_text
+from src.utils.normalize_text import normalize_text
 
 class BihusInfoScrapper(BaseScrapper):
 
@@ -17,7 +17,7 @@ class BihusInfoScrapper(BaseScrapper):
         Inside subsitemap, using <lastmod> finds what articles to take.
         Returns a list of links."""
 
-        sitemap_index_response = get_response(self.sitemap_index_url)
+        sitemap_index_response = get_response(self.media_orm.sitemap_index_url)
         if sitemap_index_response is None:
             return None
 
@@ -64,55 +64,78 @@ class BihusInfoScrapper(BaseScrapper):
     def _get_article_soup(self, link: str) -> BeautifulSoup:
         """Takes link of article and returns the content of articles as BeautifulSoup object."""
 
-        article_response = requests.get(link)
+        article_response = get_response(link)
         article_soup = BeautifulSoup(article_response.content, "html.parser")
 
         return article_soup
 
-    def _get_featured_image_url(self, article_soup: BeautifulSoup) -> str:
+    def _get_featured_image_url(self, article_soup: BeautifulSoup) -> str | None:
         """Takes content of article in form of soup and returns featured image url."""
 
-        featured_image_url = str(article_soup.find(
+        featured_image_url = article_soup.find(
             name='meta',
             attrs={'property': 'og:image'}
-        )['content'])
+        )
+
+        if featured_image_url:
+            featured_image_url = str(featured_image_url['content'])
+        else:
+            featured_image_url = None
 
         return featured_image_url
 
-    def _get_title(self, article_soup: BeautifulSoup) -> str:
+    def _get_title(self, article_soup: BeautifulSoup) -> str | None:
         """Takes content of article in form of soup and returns title."""
 
-        title = str(article_soup.find(
+        title = article_soup.find(
             name='meta',
             attrs={'property': 'og:title'}
-        )['content'])
+        )
+
+        if title:
+            title = str(title['content'])
+        else:
+            title = None
 
         return title
 
-    def _get_author(self, article_soup: BeautifulSoup) -> str:
+    def _get_author(self, article_soup: BeautifulSoup) -> str | None:
         """Takes content of article in form of soup and returns title."""
 
-        author = str(article_soup.find(
+        author = article_soup.find(
             name='meta',
             attrs={'name': 'author'}
-        )['content'])
+        )
+
+        if author:
+            author = str(author['content'])
+        else:
+            author = None
 
         return author
 
-    def _get_published_at(self, article_soup: BeautifulSoup) -> datetime:
+    def _get_published_at(self, article_soup: BeautifulSoup) -> datetime | None:
         """Takes content of article in form of soup and returns published date."""
 
-        published_at = datetime.fromisoformat(article_soup.find(
+        published_at = article_soup.find(
             name='meta',
             attrs={'property': 'article:published_time'}
-        )['content'])
+        )
+
+        if published_at:
+            published_at = datetime.fromisoformat(published_at['content'])
+        else:
+            published_at = None
 
         return published_at
 
 
-    def _get_content(self, article_soup: BeautifulSoup) -> str:
+    def _get_content(self, article_soup: BeautifulSoup) -> str | None:
         """Takes content of article in form of soup and returns normalised content."""
 
-        content = normalise_text(article_soup.find('div', attrs={'class': 'bi-single-content'}))
+        content = article_soup.find('div', attrs={'class': 'bi-single-content'})
 
-        return content
+        if not content:
+            return None
+
+        return normalize_text(content)

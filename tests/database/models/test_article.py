@@ -1,39 +1,12 @@
-from datetime import datetime
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text
-
 import unittest
+from datetime import datetime
 
 from src.database.models.article import Article
-from src.database.models.base import Base
-from src.database.models.cluster import Cluster
 from src.database.models.media import Media
-from src.database.session import get_connection
+from src.database.models.cluster import Cluster
+from tests.base_test import TestBaseCase
 
-class TestArticleCase(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.engine = get_connection("postgresql+psycopg2://postgres:pass@localhost:5432/test_db")
-        with cls.engine.connect() as conn:
-            conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
-            conn.commit()
-
-        Base.metadata.create_all(cls.engine)
-        cls.Session = sessionmaker(bind=cls.engine)
-
-    @classmethod
-    def tearDownClass(cls):
-        Base.metadata.drop_all(cls.engine)
-        cls.engine.dispose()
-
-    def setUp(self):
-        self.session = self.Session()
-        self.transaction = self.session.begin_nested()
-
-    def tearDown(self):
-        self.transaction.rollback()
-        self.session.close()
+class TestArticleCase(TestBaseCase):
 
     def test_article_creation(self):
         """Check that the article record is created correctly."""

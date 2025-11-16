@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 
 from src.scrapper.scrappers.base_scrapper import ArticleInfo
 from src.scrapper.scrappers.bihus_info_scrapper import BihusInfoScrapper
+from src.database.models.media import Media
+from src.database.models.article import Article
 from tests.helpers import create_mock_response, URL_TO_FIXTURE_MAP, FIXTURE_PATH
 
 TEST_URL_1 = "https://bihus.info/rosijski-vijskovi-na-sumshhyni-zahopyly-zhytlovyj-budynok-a-potim-rozstrilyaly-jogo-iz-kulemeta/"
@@ -14,7 +16,13 @@ TEST_URL_2 = "https://bihus.info/ne-bulo-ni-zvuku-ni-svystu-vidrazu-pidnyalas-ve
 class TestBihusInfoScrapper(unittest.TestCase):
 
     def setUp(self):
-        self.scrapper = BihusInfoScrapper("name", "https://bihus.info/sitemap_index.xml")
+        media_orm = Media(
+            name="Bihus.Info",
+            sitemap_index_url="https://bihus.info/sitemap_index.xml",
+            is_active=True
+        )
+
+        self.scrapper = BihusInfoScrapper(media_orm)
 
     @patch('src.utils.get_response.requests.get')
     @patch('src.utils.get_response.random.uniform')
@@ -60,6 +68,7 @@ class TestBihusInfoScrapper(unittest.TestCase):
         Using all other _get_element functions"""
 
         mock_get.side_effect = create_mock_response
+        mock_uniform.return_value = 0
 
         retrieved = self.scrapper.parse_article(TEST_URL_1)
 

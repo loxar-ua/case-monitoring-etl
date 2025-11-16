@@ -1,43 +1,15 @@
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text
-
 import unittest
 from datetime import datetime
 
 from src.database.models.article import Article
-from src.database.models.base import Base
 from src.database.models.cluster import Cluster
-from src.database.session import get_connection
+from tests.base_test import TestBaseCase
 
-
-class TestClusterCase(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.engine = get_connection("postgresql+psycopg2://postgres:pass@localhost:5432/test_db")
-        with cls.engine.connect() as conn:
-            conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
-            conn.commit()
-
-        Base.metadata.create_all(cls.engine)
-        cls.Session = sessionmaker(bind=cls.engine)
-
-    @classmethod
-    def tearDownClass(cls):
-        Base.metadata.drop_all(cls.engine)
-        cls.engine.dispose()
-
-    def setUp(self):
-        self.session = self.Session()
-        self.transaction = self.session.begin_nested()
-
-    def tearDown(self):
-        self.transaction.rollback()
-        self.session.close()
+class TestArticleCase(TestBaseCase):
 
     def test_cluster_creation(self):
         """Check that the cluster record is created correctly."""
-        cluster = Cluster(name = "cluster")
+        cluster = Cluster(name="cluster")
         self.session.add(cluster)
 
         retrieved = self.session.query(Cluster).first()
@@ -47,7 +19,7 @@ class TestClusterCase(unittest.TestCase):
 
     def test_cluster_relationship(self):
         """Check that the cluster relationship is created correctly."""
-        cluster = Cluster(name = "cluster" )
+        cluster = Cluster(name="cluster")
 
         self.session.add(cluster)
         self.session.flush()
@@ -68,7 +40,6 @@ class TestClusterCase(unittest.TestCase):
 
         self.assertIsNotNone(retrieved.articles[0])
         self.assertEqual(retrieved.articles[0].title, "title")
-
 
 if __name__ == "__main__":
     unittest.main()
