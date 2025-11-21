@@ -42,6 +42,32 @@ class TestBihusInfoScrapper(unittest.TestCase):
         self.assertEqual(retrieved[0], TEST_URL_1)
         self.assertEqual(retrieved[1], TEST_URL_2)
 
+    @patch('src.utils.get_response.requests.get')
+    @patch('src.utils.get_response.random.uniform')
+    def test_parse_article(self, mock_uniform, mock_get):
+        """Test parse_article returns correct article.
+        Using all other _get_element functions"""
+
+        mock_get.side_effect = create_mock_response
+        mock_uniform.return_value = 0
+
+        retrieved = self.scrapper.parse_article(TEST_URL_1)
+
+        self.assertIsInstance(retrieved, ArticleInfo)
+
+        self.assertEqual(retrieved.link, TEST_URL_1)
+
+        self.assertEqual(retrieved.title, ("На Херсонщині ворог вбиває людей, нищить "
+                                           "населені пункти, краде авто та використовує заборонені "
+                                           "види озброєння проти цивільних - Bihus.Info"))
+
+        self.assertEqual(retrieved.featured_image_url, "https://bihus.info/wp-content/uploads/2022/04/prevyu.jpg")
+
+        self.assertEqual(retrieved.author, "bihus.info")
+
+        self.assertEqual(retrieved.published_at, datetime(2022, 4, 19, 14, 52, 43, tzinfo=timezone.utc))
+
+
 
 if __name__ == '__main__':
     unittest.main()
