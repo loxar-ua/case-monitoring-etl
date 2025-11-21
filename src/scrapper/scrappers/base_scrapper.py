@@ -5,11 +5,14 @@ from datetime import datetime
 from src.scrapper.scrappers import ArticleInfo
 
 from src.database.models.media import Media
+from src.utils.get_response import get_response
+
 
 class BaseScrapper(ABC):
     def __init__(self, media_orm: Media, **kwargs):
         super().__init__(**kwargs)
 
+        self.elements_cfg = None
         self.media_orm = media_orm
 
     @abstractmethod
@@ -18,35 +21,33 @@ class BaseScrapper(ABC):
         Returns a list of links."""
         pass
 
-    @abstractmethod
+    def _get_element(self, article_soup: BeautifulSoup, cfg: dict) -> str | None:
+        """Unified method that takes html code of article,
+        name and attributes of tag to find it and then makes some formatting"""
+
+        element = article_soup.find(
+            name=cfg["tag_name"],
+            attrs=cfg["tag_attrs"]
+        )
+
+        if not element:
+            return None
+
+        if element.has_attr("content"):
+            value = element['content']
+        else:
+            value = element
+
+        return cfg["formatter"](value)
+
     def _get_article_soup(self, link: str) -> BeautifulSoup:
         """Takes link of article and returns the content of articles as BeautifulSoup object."""
-        pass
 
-    @abstractmethod
-    def _get_featured_image_url(self, article_soup: BeautifulSoup) -> str:
-        """Takes content of article in form of soup and returns featured image url."""
-        pass
+        article_response = get_response(link)
+        article_soup = BeautifulSoup(article_response.content, "html.parser")
 
-    @abstractmethod
-    def _get_title(self, article_soup: BeautifulSoup) -> str:
-        """Takes content of article in form of soup and returns title."""
-        pass
+        return article_soup
 
-    @abstractmethod
-    def _get_author(self, article_soup: BeautifulSoup) -> str:
-        """Takes content of article in form of soup and returns title."""
-        pass
-
-    @abstractmethod
-    def _get_published_at(self, article_soup: BeautifulSoup) -> datetime:
-        """Takes content of article in form of soup and returns published date."""
-        pass
-
-    @abstractmethod
-    def _get_content(self, article_soup: BeautifulSoup) -> str:
-        """Takes content of article in form of soup and returns normalised content."""
-        pass
 
     def parse_article(self, link: str) -> ArticleInfo:
         """Collects all elements of article using functions above
@@ -54,13 +55,18 @@ class BaseScrapper(ABC):
 
         soup = self._get_article_soup(link)
 
+        extracted = {}
+
+        for key, cfg in self.elements_cfg.items():
+            extracted[key] = self._get_element(soup, cfg)
+
         article_data = ArticleInfo(
             link,
-            self._get_title(soup),
-            self._get_featured_image_url(soup),
-            self._get_author(soup),
-            self._get_published_at(soup),
-            self._get_content(soup),
+            extracted["title"],
+            extracted["featured_image_url"],
+            extracted["author"],
+            extracted["published_at"],
+            extracted["content"],
             self.media_orm.id
         )
 
