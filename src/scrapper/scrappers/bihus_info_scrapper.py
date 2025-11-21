@@ -7,8 +7,7 @@ from .base_scrapper import BaseScrapper
 from src.utils.get_response import get_response
 from . import LinkInfo
 from ...database.models.media import Media
-from configs import BIHUS_CFG
-
+from .configs import BIHUS_CFG
 
 class BihusInfoScrapper(BaseScrapper):
 
