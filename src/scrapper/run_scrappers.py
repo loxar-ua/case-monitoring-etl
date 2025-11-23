@@ -15,6 +15,9 @@ def run_scrappers(operational_mode: bool, scrapper_date_config: dict[str, Scrapp
         Scrapper_Class = SCRAPPER_MAP[media.name]
         scrapper = Scrapper_Class(media)
 
+        if not media.name in scrapper_date_config:
+            continue
+
         if operational_mode: # Operational mode
             START_DATE = db_service.get_last_published_date(media)
             END_DATE = datetime.now(tz=timezone.utc)

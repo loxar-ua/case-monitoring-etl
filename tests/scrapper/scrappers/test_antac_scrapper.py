@@ -4,23 +4,23 @@ from unittest.mock import patch
 from datetime import datetime, timezone
 
 from src.scrapper.scrappers.base_scrapper import ArticleInfo
-from src.scrapper.scrappers.bihus_info_scrapper import BihusInfoScrapper
+from src.scrapper.scrappers.antac_scrapper import AntacScrapper
 from src.database.models.media import Media
 from src.database.models.article import Article
 from tests.helpers import create_mock_response
 
-TEST_URL_1 = "https://bihus.info/rosijski-vijskovi-na-sumshhyni-zahopyly-zhytlovyj-budynok-a-potim-rozstrilyaly-jogo-iz-kulemeta/"
-TEST_URL_2 = "https://bihus.info/ne-bulo-ni-zvuku-ni-svystu-vidrazu-pidnyalas-velyka-pylyuka-potim-des-za-2-sekundy-posypalys-vikna-na-zhytomyrshhyni-rosijska-krylata-raketa-rozbyla-shkolu/"
+TEST_URL_1 = "https://antac.org.ua/en/news/how-avakov-venediktova-and-pechersk-court-rescue-the-agrobaron-bakhmatyuk-and-his-property/"
+TEST_URL_2 = "https://antac.org.ua/news/shans-dlia-realnoi-sudovoi-reformy-rada-pidtrymala-ochyshchennia-vyshchoi-rady-pravosuddia/"
 
 class TestBihusInfoScrapper(unittest.TestCase):
     def setUp(self):
         media_orm = Media(
-            name="Bihus.Info",
-            sitemap_index_url="https://bihus.info/sitemap_index.xml",
+            name="Antac",
+            sitemap_index_url="https://antac.org.ua/sitemap_index.xml",
             is_active=True
         )
 
-        self.scrapper = BihusInfoScrapper(media_orm)
+        self.scrapper = AntacScrapper(media_orm)
 
     @patch('src.utils.get_response.requests.get')
     @patch('src.utils.get_response.random.uniform')
@@ -32,8 +32,8 @@ class TestBihusInfoScrapper(unittest.TestCase):
         mock_get.side_effect = create_mock_response
         mock_uniform.return_value = 0
 
-        start_date = datetime(2022, 5, 4, 15, 15, tzinfo=timezone.utc)
-        end_date = datetime(2022, 5, 4, 15, 19, tzinfo=timezone.utc)
+        start_date = datetime(2021, 7, 13, 11, 0, tzinfo=timezone.utc)
+        end_date = datetime(2021, 7, 14, 11, 0, tzinfo=timezone.utc)
 
         retrieved = self.scrapper.get_links(start_date, end_date)
 
@@ -50,22 +50,21 @@ class TestBihusInfoScrapper(unittest.TestCase):
         mock_get.side_effect = create_mock_response
         mock_uniform.return_value = 0
 
-        retrieved = self.scrapper.parse_article(TEST_URL_1)
+        retrieved = self.scrapper.parse_article(TEST_URL_2)
 
         self.assertIsInstance(retrieved, ArticleInfo)
 
-        self.assertEqual(retrieved.link, TEST_URL_1)
+        self.assertEqual(retrieved.link, TEST_URL_2)
 
-        self.assertEqual(retrieved.title, ("На Херсонщині ворог вбиває людей, нищить "
-                                           "населені пункти, краде авто та використовує заборонені "
-                                           "види озброєння проти цивільних - Bihus.Info"))
+        self.assertEqual(retrieved.title, ("Шанс для реальної судової реформи: "
+                                           "Рада підтримала очищення Вищої ради правосуддя - "
+                                           "Центр Протидії Корупції"))
 
-        self.assertEqual(retrieved.featured_image_url, "https://bihus.info/wp-content/uploads/2022/04/prevyu.jpg")
+        self.assertEqual(retrieved.featured_image_url, "https://antac.org.ua/wp-content/uploads/2020/10/Zelenskyy-venetsyanka.jpg")
 
-        self.assertEqual(retrieved.author, "bihus.info")
+        self.assertEqual(retrieved.author, None)
 
-        self.assertEqual(retrieved.published_at, datetime(2022, 4, 19, 14, 52, 43, tzinfo=timezone.utc))
-
+        self.assertEqual(retrieved.published_at, datetime(2021, 7, 19, 10, 48, 38, tzinfo=timezone.utc))
 
 
 if __name__ == '__main__':
