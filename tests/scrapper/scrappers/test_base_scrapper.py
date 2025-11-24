@@ -2,9 +2,6 @@ import unittest
 from unittest.mock import patch
 from bs4 import BeautifulSoup
 
-from datetime import datetime, timezone
-
-from src.scrapper.scrappers.base_scrapper import ArticleInfo
 from src.scrapper.scrappers.bihus_info_scrapper import BihusInfoScrapper
 from src.database.models.media import Media
 from src.database.models.article import Article
