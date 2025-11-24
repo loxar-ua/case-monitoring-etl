@@ -1,7 +1,11 @@
 import unittest
+from unittest.mock import patch
+
 from datetime import datetime, timezone
 from src.scrapper.scrappers.bihus_info_scrapper import BihusInfoScrapper
-from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
+from src.database.models.media import Media
+from src.database.models.article import Article
+from tests.helpers import create_mock_response
 
 TEST_URL_1 = "https://bihus.info/rosijski-vijskovi-na-sumshhyni-zahopyly-zhytlovyj-budynok-a-potim-rozstrilyaly-jogo-iz-kulemeta/"
 TEST_URL_2 = "https://bihus.info/ne-bulo-ni-zvuku-ni-svystu-vidrazu-pidnyalas-velyka-pylyuka-potim-des-za-2-sekundy-posypalys-vikna-na-zhytomyrshhyni-rosijska-krylata-raketa-rozbyla-shkolu/"

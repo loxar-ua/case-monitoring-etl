@@ -25,6 +25,9 @@ class BaseScrapper(ABC):
         """Unified method that takes html code of article,
         name and attributes of tag to find it and then makes some formatting"""
 
+        if not cfg["tag_name"]:
+            return None
+
         element = article_soup.find(
             name=cfg["tag_name"],
             attrs=cfg["tag_attrs"]
