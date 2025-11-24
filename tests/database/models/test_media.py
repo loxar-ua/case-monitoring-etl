@@ -3,7 +3,7 @@ from datetime import datetime
 
 from src.database.models.article import Article
 from src.database.models.media import Media
-from tests.base_test import TestBaseCase
+from tests.base_test_db import TestBaseCase
 
 class TestArticleCase(TestBaseCase):
     def test_media_creation(self):
