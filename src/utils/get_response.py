@@ -11,7 +11,7 @@ HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0 (compatible; PublicMonitorBot/1.0; +https://github.com/loxar-ua/.github)'
 }
 
-TIMEOUT = 30
+TIMEOUT = 100
 
 
 def get_response(url: str) -> requests.Response | None:

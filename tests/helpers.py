@@ -36,6 +36,14 @@ URL_TO_FIXTURE_MAP = {
         "https://www.chesno.org/sitemap-posts.xml": "chesno/posts.xml",
         "https://www.chesno.org/post/6645/": "chesno/article.html",
 
+
+        "https://texty.org.ua/sitemap.xml":
+        "texty/sitemap.xml",
+        "https://texty.org.ua/sitemap-articles.xml":
+        "texty/articles.xml",
+        "https://texty.org.ua/articles/116355/korupcijni-nebesa-hrushevskoho-9a-istoriya-skandalnoho-budivnyctva-j-meshkanciv/":
+        "texty/article.html",
+
     }
 
 def create_mock_response(url, *args, **kwargs):

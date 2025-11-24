@@ -29,6 +29,9 @@ def run_scrappers(operational_mode: bool, scrapper_date_config: dict[str, Scrapp
 
         links = scrapper.get_links(start_date=START_DATE, end_date=END_DATE)
 
+        if not links:
+            continue
+
         for link in links:
             article_info = scrapper.parse_article(link)
             db_service.post_article(article_info)
