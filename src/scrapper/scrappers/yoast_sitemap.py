@@ -39,7 +39,7 @@ def get_links_yoast(sitemap_index_url, sub_sitemaps_pattern, start_date, end_dat
         for url_tag in sub_sitemap_soup.urlset.find_all(recursive=False):
             combined_sub_sitemap.urlset.append(url_tag)
 
-    article_urls = [LinkInfo(url.find("loc").text,
+    article_urls = [LinkInfo(url.find("loc").text.strip(),
                              datetime.fromisoformat(url.find("lastmod").text)
                              .replace(tzinfo=timezone.utc))
                     for url in combined_sub_sitemap.urlset]
