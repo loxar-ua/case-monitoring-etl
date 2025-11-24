@@ -49,6 +49,11 @@ def get_links_yoast(sitemap_index_url, sub_sitemaps_pattern, start_date, end_dat
         article_urls
     ))
 
+    article_urls = list(sorted(
+        article_urls,
+        key=lambda x: x.datetime
+    ))
+
     links = [article_url.link for article_url in article_urls]
 
     return links
