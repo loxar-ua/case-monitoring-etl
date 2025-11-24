@@ -18,6 +18,10 @@ URL_TO_FIXTURE_MAP = {
         "https://tyzhden.ua/wp-sitemap-posts-post-123.xml":"Tyzhden/wp-sitemap-posts-post-123.xml",
         "https://tyzhden.ua/wp-sitemap-posts-post-124.xml":"Tyzhden/wp-sitemap-posts-post-124.xml",
 
+
+        "https://nashigroshi.org/sitemap.xml":"nashi_groshi/sitemap.xml",
+        "https://nashigroshi.org/sitemap-pt-post-2025-10.xml":"nashi_groshi/sitemap-pt-post-2025-10.xml",
+        "https://nashigroshi.org/sitemap-pt-post-2025-11.xml":"nashi_groshi/sitemap-pt-post-2025-11.xml",
         ("https://bihus.info/ne-bulo-ni-zvuku-ni-svystu-vidrazu-pidnyalas"
         "-velyka-pylyuka-potim-des-za-2-sekundy-posypalys-vikna-na-zhytomyrshhyni"
         "-rosijska-krylata-raketa-rozbyla-shkolu/"):
@@ -31,7 +35,13 @@ URL_TO_FIXTURE_MAP = {
          " та використовує заборонені види озброєння проти цивільних - Bihus.Info.html"),
 
         "https://tyzhden.ua/svidchennia-1933-ho/":"Tyzhden/https_tyzhden.uasvidchennia-1933-ho.html",
-        "https://tyzhden.ua/v-tyshi-lopotinnia-praporiv/":"Tyzhden/https_tyzhden.uav-tyshi-lopotinnia-praporiv.html"
+        "https://tyzhden.ua/v-tyshi-lopotinnia-praporiv/":"Tyzhden/https_tyzhden.uav-tyshi-lopotinnia-praporiv.html",
+
+        "https://nashigroshi.org/2025/11/03/enerhoatom-za-19-mil-yoniv-zastrakhuvav-nahliadovu-radu-na-vypadok-areshtiv/":
+        "nashi_groshi/https_nashigroshi_org_2025_11_03_enerhoatom-za-19-mil-yoniv-zastrakhuvav-nahliadovu-radu-na-vypadok-areshtiv.html",
+
+        "https://nashigroshi.org/2025/11/03/politsiia-upershe-zamovyla-broneshchyty-velmet-z-likhtariamy-odrazu-na-53-mil-yony/":
+        "nashi_groshi/https_nashigroshi_org_2025_11_03_politsiia-upershe-zamovyla-broneshchyty-velmet-z-likhtariamy-odrazu-na-53-mil-yony.html",
     }
 
 def create_mock_response(url, *args, **kwargs):

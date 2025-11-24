@@ -1,5 +1,6 @@
 from src.scrapper.scrappers.bihus_info_scrapper import BihusInfoScrapper
 from src.scrapper.scrappers.tyzhden_scrapper import TyzhdenScrapper
+from src.scrapper.scrappers.nashi_groshi_scrapper import NashiGroshiScrapper
 from collections import namedtuple
 from datetime import datetime, timezone
 
@@ -14,11 +15,12 @@ ScrapperDateConfig = namedtuple(
 SCRAPPER_MAP = {
     "Bihus.Info": BihusInfoScrapper,
     "Український тиждень": TyzhdenScrapper,
+    "НАШІ ГРОШІ": NashiGroshiScrapper,
 }
 
 SCRAPPER_DATE_CONFIG = {
-    "Український тиждень": ScrapperDateConfig(
-            datetime(2022, 5, 15, 18, 51, tzinfo=timezone.utc),
+    "НАШІ ГРОШІ": ScrapperDateConfig(
+            datetime(2025, 1, 11, 1, 10, tzinfo=timezone.utc),
             datetime.now(timezone.utc),
         )
 }
