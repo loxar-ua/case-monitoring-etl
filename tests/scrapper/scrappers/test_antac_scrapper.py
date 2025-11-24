@@ -6,7 +6,7 @@ from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 TEST_URL_1 = "https://antac.org.ua/en/news/how-avakov-venediktova-and-pechersk-court-rescue-the-agrobaron-bakhmatyuk-and-his-property/"
 TEST_URL_2 = "https://antac.org.ua/news/shans-dlia-realnoi-sudovoi-reformy-rada-pidtrymala-ochyshchennia-vyshchoi-rady-pravosuddia/"
 
-class TestBihusInfoScrapper(CommonScrapperTestCase, unittest.TestCase,):
+class TestAntacScrapper(CommonScrapperTestCase, unittest.TestCase,):
     scrapper_class = AntacScrapper
 
     media_data = {
