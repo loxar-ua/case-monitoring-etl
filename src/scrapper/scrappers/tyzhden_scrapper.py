@@ -3,7 +3,7 @@ from datetime import datetime
 from .base_scrapper import BaseScrapper
 from .yoast_sitemap_tyzhden import get_links_yoast
 from ...database.models.media import Media
-from .configs import TYZHDEN_CFG
+from src.scrapper.configs import TYZHDEN_CFG
 
 class TyzhdenScrapper(BaseScrapper):
 

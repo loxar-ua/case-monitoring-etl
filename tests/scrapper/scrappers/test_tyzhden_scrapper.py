@@ -15,7 +15,7 @@ TEST_URL_2="https://tyzhden.ua/svidchennia-1933-ho/"
 class TestTyzhdenScrapper(unittest.TestCase):
     def setUp(self):
         media_orm = Media(
-            name="Tyzhden",
+            name="Український тиждень",
             sitemap_index_url="https://tyzhden.ua/wp-sitemap.xml",
             is_active=True
         )
