@@ -55,6 +55,7 @@ def create_mock_response(url, *args, **kwargs):
         mock_response._content = file_content
         mock_response.headers['Content-Type'] = str(guess_type(str(file_path)))
     else:
+        print(f'No fixture exists for this: {url}')
         mock_response._content = b''
 
     return mock_response
