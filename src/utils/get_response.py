@@ -22,7 +22,7 @@ def get_response(url: str) -> requests.Response | None:
     response = None
 
     # To be not blocked we should have random delay
-    delay = random.uniform(1, 3)
+    delay = random.uniform(0.5, 1)
     time.sleep(delay)
 
     try:

@@ -6,7 +6,6 @@ from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 TEST_URL_1 = "https://bihus.info/rosijski-vijskovi-na-sumshhyni-zahopyly-zhytlovyj-budynok-a-potim-rozstrilyaly-jogo-iz-kulemeta/"
 TEST_URL_2 = "https://bihus.info/ne-bulo-ni-zvuku-ni-svystu-vidrazu-pidnyalas-velyka-pylyuka-potim-des-za-2-sekundy-posypalys-vikna-na-zhytomyrshhyni-rosijska-krylata-raketa-rozbyla-shkolu/"
 
-
 class TestBihusInfoScrapper(CommonScrapperTestCase, unittest.TestCase,):
     scrapper_class = BihusInfoScrapper
 

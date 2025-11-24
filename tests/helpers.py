@@ -30,7 +30,11 @@ URL_TO_FIXTURE_MAP = {
         "https://antac.org.ua/news-sitemap3.xml":
         "antac/news-sitemap3.xml",
         "https://antac.org.ua/news/shans-dlia-realnoi-sudovoi-reformy-rada-pidtrymala-ochyshchennia-vyshchoi-rady-pravosuddia/":
-        "antac/article.html"
+        "antac/article.html",
+
+        "https://www.chesno.org/sitemap.xml": "chesno/sitemap.xml",
+        "https://www.chesno.org/sitemap-posts.xml": "chesno/posts.xml",
+        "https://www.chesno.org/post/6645/": "chesno/article.html",
 
     }
 

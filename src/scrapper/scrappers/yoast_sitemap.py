@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from datetime import datetime
+from datetime import datetime, timezone
 import re
 
 from src.utils.get_response import get_response
@@ -17,20 +17,19 @@ def get_links_yoast(sitemap_index_url, sub_sitemaps_pattern, start_date, end_dat
 
     sitemap_index_soup = BeautifulSoup(sitemap_index_response.content, "lxml-xml")
 
-    sub_sitemap_urls = [LinkInfo(sitemap.find('loc').text,
-                                 datetime.fromisoformat(sitemap.find('lastmod').text))
+    sub_sitemap_urls = [sitemap.find('loc').text
                         for sitemap in sitemap_index_soup.find_all("sitemap")]
 
     # Filter all unimportant sitemaps, that don't contain articles
     sub_sitemap_urls = list(filter(
-        lambda x: re.fullmatch(sub_sitemaps_pattern, x.link),
+        lambda x: re.fullmatch(sub_sitemaps_pattern, x),
         sub_sitemap_urls
     ))
 
     combined_sub_sitemap = BeautifulSoup("<urlset></urlset>", "lxml-xml")
     for sub_sitemap_url in sub_sitemap_urls:
 
-        sub_sitemap_response = get_response(sub_sitemap_url.link)
+        sub_sitemap_response = get_response(sub_sitemap_url)
 
         if sub_sitemap_response is None:
             continue
@@ -41,7 +40,8 @@ def get_links_yoast(sitemap_index_url, sub_sitemaps_pattern, start_date, end_dat
             combined_sub_sitemap.urlset.append(url_tag)
 
     article_urls = [LinkInfo(url.find("loc").text,
-                             datetime.fromisoformat(url.find("lastmod").text))
+                             datetime.fromisoformat(url.find("lastmod").text)
+                             .replace(tzinfo=timezone.utc))
                     for url in combined_sub_sitemap.urlset]
 
     article_urls = list(filter(
