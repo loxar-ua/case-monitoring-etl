@@ -57,6 +57,14 @@ URL_TO_FIXTURE_MAP = {
         "https://www.chesno.org/sitemap-posts.xml": "chesno/posts.xml",
         "https://www.chesno.org/post/6645/": "chesno/article.html",
 
+        "https://www.slovoidilo.ua/sitemap_index_uk.xml":"slovo_i_dilo/sitemap_index_uk.xml",
+        "https://www.slovoidilo.ua/sitemap/monthly_2025-11_uk.xml":"slovo_i_dilo/monthly_2025-11_uk.xml",
+
+        "https://www.slovoidilo.ua/2025/11/25/novyna/polityka/komandi-trampa-rozpochalasya-pryxovana-borotba-cherez-myrnyj-plan-shhodo-ukrayiny-zmi":
+        "slovo_i_dilo/https_www_slovoidilo_ua_2025_11_25_novyna_polityka_komandi-trampa-rozpochalasya-pryxovanarotba-cherez-myrnyj-plan-shhodo-ukrayiny-zmi.html",
+        "https://www.slovoidilo.ua/2025/11/25/novyna/polityka/sud-zalyshyv-vartoyu-fihurantku-spravy-midas-ustymenko":
+        "slovo_i_dilo/https_www_slovoidilo_ua_2025_11_25_novyna_polityka_sud-zalyshyv-vartoyu-fihurantku-spravy-midas-ustymenko.html",
+
     }
 
 def create_mock_response(url, *args, **kwargs):
