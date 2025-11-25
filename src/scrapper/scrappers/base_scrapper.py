@@ -21,20 +21,26 @@ class BaseScrapper(ABC):
         Returns a list of links."""
         pass
 
-    def _get_element(self, article_soup: BeautifulSoup, cfg: dict):
-        """Universal element extractor."""
-        tag_name = cfg.get("tag_name")
-        if not tag_name:
+    def _get_element(self, article_soup: BeautifulSoup, cfg: dict) -> str | None:
+        """Unified method that takes html code of article,
+        name and attributes of tag to find it and then makes some formatting"""
+
+        if not cfg["tag_name"]:
             return None
 
-        element = article_soup.find(name=tag_name, attrs=cfg.get("tag_attrs", {}))
+        element = article_soup.find(
+            name=cfg["tag_name"],
+            attrs=cfg["tag_attrs"]
+        )
+
         if not element:
             return None
 
-        if tag_name == "lastmod":
-            return cfg["formatter"](element)
+        if element.has_attr("content"):
+            value = element['content']
+        else:
+            value = element
 
-        value = element['content'] if element.has_attr("content") else element
         return cfg["formatter"](value)
 
     def _get_article_soup(self, link: str) -> BeautifulSoup:

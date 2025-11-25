@@ -1,6 +1,9 @@
 from src.scrapper.scrappers.bihus_info_scrapper import BihusInfoScrapper
 from src.scrapper.scrappers.tyzhden_scrapper import TyzhdenScrapper
 from src.scrapper.scrappers.nashi_groshi_scrapper import NashiGroshiScrapper
+from src.scrapper.scrappers.chesno_scrapper import ChesnoScrapper
+from src.scrapper.scrappers.antac_scrapper import AntacScrapper
+
 from collections import namedtuple
 from datetime import datetime, timezone
 
@@ -16,6 +19,8 @@ SCRAPPER_MAP = {
     "Bihus.Info": BihusInfoScrapper,
     "Український тиждень": TyzhdenScrapper,
     "НАШІ ГРОШІ": NashiGroshiScrapper,
+    "Центр протидії корупції": AntacScrapper,
+    "Рух Чесно": ChesnoScrapper
 }
 
 SCRAPPER_DATE_CONFIG = {
@@ -23,4 +28,6 @@ SCRAPPER_DATE_CONFIG = {
             datetime(2025, 1, 11, 1, 10, tzinfo=timezone.utc),
             datetime.now(timezone.utc),
         )
+
 }
+

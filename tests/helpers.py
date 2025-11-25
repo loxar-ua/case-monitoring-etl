@@ -22,17 +22,18 @@ URL_TO_FIXTURE_MAP = {
         "https://nashigroshi.org/sitemap.xml":"nashi_groshi/sitemap.xml",
         "https://nashigroshi.org/sitemap-pt-post-2025-10.xml":"nashi_groshi/sitemap-pt-post-2025-10.xml",
         "https://nashigroshi.org/sitemap-pt-post-2025-11.xml":"nashi_groshi/sitemap-pt-post-2025-11.xml",
+
         ("https://bihus.info/ne-bulo-ni-zvuku-ni-svystu-vidrazu-pidnyalas"
         "-velyka-pylyuka-potim-des-za-2-sekundy-posypalys-vikna-na-zhytomyrshhyni"
         "-rosijska-krylata-raketa-rozbyla-shkolu/"):
         ("bihus_info/https___bihus.info_ne-bulo-ni-zvuku-ni-svystu-vidrazu-pidnyalas"
          "-velyka-pylyuka-potim-des-za-2-sekundy-posypalys-vikna-na-zhytomyrshhyni"
          "-rosijska-krylata-raketa-rozbyla-shkolu_.html"),
-
         ("https://bihus.info/rosijski-vijskovi-na-sumshhyni-zahopyly-zhytlovyj" 
         "-budynok-a-potim-rozstrilyaly-jogo-iz-kulemeta/"):
         ("bihus_info/На Херсонщині ворог вбиває людей, нищить населені пункти, краде авто"
          " та використовує заборонені види озброєння проти цивільних - Bihus.Info.html"),
+
 
         "https://tyzhden.ua/svidchennia-1933-ho/":"Tyzhden/https_tyzhden.uasvidchennia-1933-ho.html",
         "https://tyzhden.ua/v-tyshi-lopotinnia-praporiv/":"Tyzhden/https_tyzhden.uav-tyshi-lopotinnia-praporiv.html",
@@ -42,6 +43,20 @@ URL_TO_FIXTURE_MAP = {
 
         "https://nashigroshi.org/2025/11/03/politsiia-upershe-zamovyla-broneshchyty-velmet-z-likhtariamy-odrazu-na-53-mil-yony/":
         "nashi_groshi/https_nashigroshi_org_2025_11_03_politsiia-upershe-zamovyla-broneshchyty-velmet-z-likhtariamy-odrazu-na-53-mil-yony.html",
+
+        "https://antac.org.ua/sitemap_index.xml":
+        "antac/sitemap_index.xml",
+        "https://antac.org.ua/news-sitemap2.xml":
+        "antac/news-sitemap2.xml",
+        "https://antac.org.ua/news-sitemap3.xml":
+        "antac/news-sitemap3.xml",
+        "https://antac.org.ua/news/shans-dlia-realnoi-sudovoi-reformy-rada-pidtrymala-ochyshchennia-vyshchoi-rady-pravosuddia/":
+        "antac/article.html",
+
+        "https://www.chesno.org/sitemap.xml": "chesno/sitemap.xml",
+        "https://www.chesno.org/sitemap-posts.xml": "chesno/posts.xml",
+        "https://www.chesno.org/post/6645/": "chesno/article.html",
+
     }
 
 def create_mock_response(url, *args, **kwargs):
@@ -65,6 +80,7 @@ def create_mock_response(url, *args, **kwargs):
         mock_response._content = file_content
         mock_response.headers['Content-Type'] = str(guess_type(str(file_path)))
     else:
+        print(f'No fixture exists for this: {url}')
         mock_response._content = b''
 
     return mock_response

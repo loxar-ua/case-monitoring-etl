@@ -7,7 +7,7 @@ from src.database.models.article import Article
 from src.database.models.media import Media
 from src.scrapper import ScrapperDateConfig
 from src.scrapper.run_scrappers import run_scrappers
-from tests.base_test import TestBaseCase
+from tests.base_test_db import TestBaseCase
 from tests.helpers import create_mock_response
 
 SCRAPPER_DATE_CONFIG = {

@@ -12,7 +12,10 @@ def run_scrappers(operational_mode: bool, scrapper_date_config: dict[str, Scrapp
     medias = db_service.get_media()
 
     for media in medias:
-        Scrapper_Class = SCRAPPER_MAP[media.name]
+        if not media.name in scrapper_date_config:
+            continue
+
+        Scrapper_Class = SCRAPPER_MAP.get(media.name)
         scrapper = Scrapper_Class(media)
 
         if not media.name in scrapper_date_config:

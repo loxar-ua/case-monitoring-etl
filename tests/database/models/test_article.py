@@ -4,7 +4,7 @@ from datetime import datetime
 from src.database.models.article import Article
 from src.database.models.media import Media
 from src.database.models.cluster import Cluster
-from tests.base_test import TestBaseCase
+from tests.base_test_db import TestBaseCase
 
 class TestArticleCase(TestBaseCase):
 
