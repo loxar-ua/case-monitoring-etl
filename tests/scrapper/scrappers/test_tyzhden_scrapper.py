@@ -3,8 +3,8 @@ from src.scrapper.scrappers.tyzhden_scrapper import TyzhdenScrapper
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 from datetime import datetime, timezone, timedelta
 
-TEST_URL_1="https://tyzhden.ua/v-tyshi-lopotinnia-praporiv/"
-TEST_URL_2="https://tyzhden.ua/svidchennia-1933-ho/"
+TEST_URL_1="https://tyzhden.ua/svidchennia-1933-ho/"
+TEST_URL_2="https://tyzhden.ua/v-tyshi-lopotinnia-praporiv/"
 
 class TestTyzhdenScrapper(CommonScrapperTestCase, unittest.TestCase,):
     scrapper_class = TyzhdenScrapper
@@ -21,7 +21,7 @@ class TestTyzhdenScrapper(CommonScrapperTestCase, unittest.TestCase,):
     }
 
     parse_article_data = {
-        "link": TEST_URL_1,
+        "link": TEST_URL_2,
         "title": "В тиші лопотіння прапорів | Український тиждень",
         "featured_image_url": "https://tyzhden.ua/wp-content/uploads/2025/04/petrenko-on.jpg",
         "author": "Ольга Петренко-Цеунова",

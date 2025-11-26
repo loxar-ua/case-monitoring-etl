@@ -18,7 +18,7 @@ class TestNashiGroshiScrapper(CommonScrapperTestCase, unittest.TestCase,):
     get_links_data = {
         "start_date": datetime(2025, 10, 31, 13, 21, tzinfo=timezone.utc),
         "end_date": datetime(2025, 10, 31, 13, 28, tzinfo=timezone.utc),
-        "expected_links": [TEST_URL_2, TEST_URL_1]
+        "expected_links": [TEST_URL_1, TEST_URL_2]
     }
 
     parse_article_data = {

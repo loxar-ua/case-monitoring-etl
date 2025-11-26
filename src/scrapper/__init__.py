@@ -1,4 +1,7 @@
+from src.scrapper.scrappers.antac_scrapper import AntacScrapper
 from src.scrapper.scrappers.bihus_info_scrapper import BihusInfoScrapper
+from src.scrapper.scrappers.chesno_scrapper import ChesnoScrapper
+from src.scrapper.scrappers.texty_scrapper import TextyScrapper
 from src.scrapper.scrappers.tyzhden_scrapper import TyzhdenScrapper
 from src.scrapper.scrappers.nashi_groshi_scrapper import NashiGroshiScrapper
 from collections import namedtuple
@@ -16,6 +19,9 @@ SCRAPPER_MAP = {
     "Bihus.Info": BihusInfoScrapper,
     "Український тиждень": TyzhdenScrapper,
     "НАШІ ГРОШІ": NashiGroshiScrapper,
+    "Тексти": TextyScrapper,
+    "Центр протидії корупції": AntacScrapper,
+    "Рух Чесно": ChesnoScrapper,
 }
 
 SCRAPPER_DATE_CONFIG = {
