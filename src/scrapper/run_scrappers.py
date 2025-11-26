@@ -12,11 +12,11 @@ def run_scrappers(operational_mode: bool, scrapper_date_config: dict[str, Scrapp
     medias = db_service.get_media()
 
     for media in medias:
+        Scrapper_Class = SCRAPPER_MAP[media.name]
+        scrapper = Scrapper_Class(media)
+
         if not media.name in scrapper_date_config:
             continue
-
-        Scrapper_Class = SCRAPPER_MAP.get(media.name)
-        scrapper = Scrapper_Class(media)
 
         if operational_mode: # Operational mode
             START_DATE = db_service.get_last_published_date(media)
@@ -28,9 +28,6 @@ def run_scrappers(operational_mode: bool, scrapper_date_config: dict[str, Scrapp
             return # TODO: log this
 
         links = scrapper.get_links(start_date=START_DATE, end_date=END_DATE)
-
-        if not links:
-            continue
 
         for link in links:
             article_info = scrapper.parse_article(link)
