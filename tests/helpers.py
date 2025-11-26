@@ -42,6 +42,27 @@ URL_TO_FIXTURE_MAP = {
 
         "https://nashigroshi.org/2025/11/03/politsiia-upershe-zamovyla-broneshchyty-velmet-z-likhtariamy-odrazu-na-53-mil-yony/":
         "nashi_groshi/https_nashigroshi_org_2025_11_03_politsiia-upershe-zamovyla-broneshchyty-velmet-z-likhtariamy-odrazu-na-53-mil-yony.html",
+
+        "https://antac.org.ua/sitemap_index.xml":
+        "antac/sitemap_index.xml",
+        "https://antac.org.ua/news-sitemap2.xml":
+        "antac/news-sitemap2.xml",
+        "https://antac.org.ua/news-sitemap3.xml":
+        "antac/news-sitemap3.xml",
+        "https://antac.org.ua/news/shans-dlia-realnoi-sudovoi-reformy-rada-pidtrymala-ochyshchennia-vyshchoi-rady-pravosuddia/":
+        "antac/article.html",
+
+        "https://www.chesno.org/sitemap.xml": "chesno/sitemap.xml",
+        "https://www.chesno.org/sitemap-posts.xml": "chesno/posts.xml",
+        "https://www.chesno.org/post/6645/": "chesno/article.html",
+
+
+        "https://texty.org.ua/sitemap.xml":
+        "texty/sitemap.xml",
+        "https://texty.org.ua/sitemap-articles.xml":
+        "texty/articles.xml",
+        "https://texty.org.ua/articles/116355/korupcijni-nebesa-hrushevskoho-9a-istoriya-skandalnoho-budivnyctva-j-meshkanciv/":
+        "texty/article.html",
     }
 
 def create_mock_response(url, *args, **kwargs):
