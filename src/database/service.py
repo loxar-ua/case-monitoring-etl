@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .session import get_session
 from .models.media import Media
@@ -40,6 +40,7 @@ def get_last_published_date(media: Media) -> datetime | None:
         )
 
         if last_published_date:
+            last_published_date = last_published_date + timedelta(seconds=1)
             return last_published_date
 
         return None

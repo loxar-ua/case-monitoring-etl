@@ -30,4 +30,6 @@ def run_scrappers(operational_mode: bool, scrapper_date_config: dict[str, Scrapp
 
         for link in links:
             article_info = scrapper.parse_article(link)
+            if not article_info:
+                continue
             db_service.post_article(article_info)

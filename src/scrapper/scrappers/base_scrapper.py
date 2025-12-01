@@ -23,6 +23,7 @@ class BaseScrapper(ABC):
 
     def _get_element(self, article_soup: BeautifulSoup, cfg: dict):
         """Universal element extractor."""
+
         tag_name = cfg.get("tag_name")
         if not tag_name:
             return None
@@ -41,16 +42,21 @@ class BaseScrapper(ABC):
         """Takes link of article and returns the content of articles as BeautifulSoup object."""
 
         article_response = get_response(link)
+        if not article_response:
+            return None
+
         article_soup = BeautifulSoup(article_response.content, "html.parser")
 
         return article_soup
 
 
-    def parse_article(self, link: str) -> ArticleInfo:
+    def parse_article(self, link: str) -> ArticleInfo | None:
         """Collects all elements of article using functions above
         and returns a dictionary of the data. Returns None if parsing fails."""
 
         soup = self._get_article_soup(link)
+        if not soup:
+            return None
 
         extracted = {}
 

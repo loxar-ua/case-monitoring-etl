@@ -12,7 +12,7 @@ def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, 
     Returns a list of links."""
 
     sitemap_index_response = get_response(sitemap_index_url)
-    if sitemap_index_response is None:
+    if not sitemap_index_response:
         return None
 
     sitemap_index_soup = BeautifulSoup(sitemap_index_response.content, "lxml-xml")
@@ -30,8 +30,7 @@ def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, 
     for sub_sitemap_url in sub_sitemap_urls:
 
         sub_sitemap_response = get_response(sub_sitemap_url)
-
-        if sub_sitemap_response is None:
+        if not sub_sitemap_response:
             continue
 
         sub_sitemap_soup = BeautifulSoup(sub_sitemap_response.content, "lxml-xml")
@@ -46,11 +45,13 @@ def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, 
                              .replace(tzinfo=timezone.utc))
                     for url in combined_sub_sitemap.urlset]
 
+    # Get articles that only fall within a specified time interval
     article_urls = list(filter(
         lambda x: start_date <= x.datetime <= end_date,
         article_urls
     ))
 
+    # Sort articles from oldest to newest
     article_urls = list(sorted(
         article_urls,
         key=lambda x: x.datetime
