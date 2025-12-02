@@ -5,7 +5,7 @@ import re
 from src.utils.parse_chesno_date import parse_chesno_date
 from src.utils.parse_texty_date import parse_texty_date
 from src.utils.get_publish_at_pravda import parse_uk_date
-
+from src.utils.get_text_pravda import article_text
 PRAVDA_CFG = {
     "title": {
         "tag_name": "meta",
@@ -36,11 +36,8 @@ PRAVDA_CFG = {
     )
     },
     "content": {
-    "tag_name": "p",
-    "tag_attrs": {"class": "MsoNormal"},
-    "formatter": str
-    }
-}
+        "extractor": article_text
+}}
 
 GROSHI_CFG = {
     "title": {

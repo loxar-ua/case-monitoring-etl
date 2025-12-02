@@ -1,14 +1,12 @@
 from bs4 import BeautifulSoup
+
 from datetime import datetime, timezone
 import re
-import io
-import gzip
-
 
 from src.utils.get_response import get_response
 from . import LinkInfo
 
-def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, end_date,):
+def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, end_date, ):
     """Using <lastmod> finds what subsitemaps to check.
     Inside subsitemap, using <lastmod> finds what articles to take.
     Returns a list of links."""
@@ -34,16 +32,7 @@ def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, 
         sub_sitemap_response = get_response(sub_sitemap_url)
         if not sub_sitemap_response:
             continue
-
-        if sub_sitemap_url.endswith(".gz"):
-            try:
-                f = io.BytesIO(sub_sitemap_response.content)
-                with gzip.open(f, 'rt', encoding='utf-8') as gz_file:
-                    sub_sitemap_soup = BeautifulSoup(gz_file.read(), "lxml-xml")
-            except gzip.BadGzipFile:
-                sub_sitemap_soup = BeautifulSoup(sub_sitemap_response.content, "lxml-xml")
-        else:
-            sub_sitemap_soup = BeautifulSoup(sub_sitemap_response.content, "lxml-xml")
+        sub_sitemap_soup = BeautifulSoup(sub_sitemap_response.content, "lxml-xml")
 
         urlset_tag = sub_sitemap_soup.find("urlset")
         if urlset_tag:

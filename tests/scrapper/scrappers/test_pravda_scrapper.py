@@ -5,17 +5,18 @@ from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://www.pravda.com.ua/news/2025/12/01/8009697/"
 
+
 class TestPravdaScrapper(CommonScrapperTestCase, unittest.TestCase,):
     scrapper_class = PravdaScrapper
 
     media_data = {
         "name": "Українська Правда",
-        "sitemap_index_url": "https://www.pravda.com.ua/sitemap/sitemap-archive.xml.gz"
+        "sitemap_index_url": "https://www.pravda.com.ua/sitemap/sitemap-archive.xml"
     }
 
     get_links_data = {
-        "start_date": datetime(2025, 12, 1, 0, 8,  tzinfo=timezone(timedelta(hours=2))),
-        "end_date": datetime(2025, 12, 1, 0, 56,  tzinfo=timezone(timedelta(hours=2))),
+        "start_date": datetime(2025, 12, 1, 0, 8,  tzinfo=timezone.utc),
+        "end_date": datetime(2025, 12, 1, 0, 8,  tzinfo=timezone.utc),
         "expected_links": [TEST_URL_1]
     }
 

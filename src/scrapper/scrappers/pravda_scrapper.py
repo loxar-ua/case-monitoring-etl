@@ -17,9 +17,12 @@ class PravdaScrapper(BaseScrapper):
 
         links = get_links_from_sitemap(
             sitemap_index_url=self.media_orm.sitemap_index_url,
-            sub_sitemaps_pattern=r"archive",
+            sub_sitemaps_pattern=r"https://www\.pravda\.com\.ua/sitemap/sitemap-(202[5-9]|20[3-9]\d)-\d{2}\.xml\.gz",
             start_date=start_date,
             end_date=end_date,
         )
-
+        links = [
+            link for link in links
+            if "/news/" in link and "/rus/" not in link and "/eng/" not in link
+        ]
         return links

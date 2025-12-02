@@ -62,7 +62,7 @@ URL_TO_FIXTURE_MAP = {
         "https://www.pravda.com.ua/sitemap/sitemap-archive.xml":
         "pravda/www_pravda_com_ua_sitemap_sitemap-archive.xml",
         "https://www.pravda.com.ua/sitemap/sitemap-2025-12.xml.gz":
-        "pravda/https_www_pravda_com_ua_sitemap_sitemap-2025-12.xml",
+        "pravda/https_www_pravda_com_ua_sitemap_sitemap-2025-12.xml.gz",
        "https://www.pravda.com.ua/news/2025/12/01/8009697/":
         "pravda/https_www_pravda_com_uanews202512018009697.html",
         "https://www.pravda.com.ua/news/2025/12/01/8009694/":
