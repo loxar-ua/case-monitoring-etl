@@ -57,6 +57,17 @@ URL_TO_FIXTURE_MAP = {
         "texty/articles.xml",
         "https://texty.org.ua/articles/116355/korupcijni-nebesa-hrushevskoho-9a-istoriya-skandalnoho-budivnyctva-j-meshkanciv/":
         "texty/article.html",
+
+
+        "https://www.pravda.com.ua/sitemap/sitemap-archive.xml":
+        "pravda/www_pravda_com_ua_sitemap_sitemap-archive.xml",
+        "https://www.pravda.com.ua/sitemap/sitemap-2025-12.xml.gz":
+        "pravda/https_www_pravda_com_ua_sitemap_sitemap-2025-12.xml",
+       "https://www.pravda.com.ua/news/2025/12/01/8009697/":
+        "pravda/https_www_pravda_com_uanews202512018009697.html",
+        "https://www.pravda.com.ua/news/2025/12/01/8009694/":
+        "pravda/https_www_pravda_com_uanews202512018009694.html",
+
     }
 
 def create_mock_response(url, *args, **kwargs):

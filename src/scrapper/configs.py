@@ -1,9 +1,46 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from src.utils.normalize_text import normalize_text
 import re
 
 from src.utils.parse_chesno_date import parse_chesno_date
 from src.utils.parse_texty_date import parse_texty_date
+from src.utils.get_publish_at_pravda import parse_uk_date
+
+PRAVDA_CFG = {
+    "title": {
+        "tag_name": "meta",
+        "tag_attrs": {"property": "og:title"},
+        "formatter": str,
+        "use_content_attr": True,
+    },
+    "author": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "post_news_date"},
+    "formatter": lambda tag: (
+        tag.find("span", class_="post_news_author").get_text(strip=True)
+        if tag and tag.find("span", class_="post_news_author")
+        else None
+    ),
+    },
+    "featured_image_url": {
+        "tag_name": "meta",
+        "tag_attrs": {"property": "og:image"},
+        "formatter": str
+    },
+
+    "published_at": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "post_news_date"},
+    "formatter": lambda tag: parse_uk_date(
+        tag.get_text(strip=True).split("—")[-1].strip()
+    )
+    },
+    "content": {
+    "tag_name": "p",
+    "tag_attrs": {"class": "MsoNormal"},
+    "formatter": str
+    }
+}
 
 GROSHI_CFG = {
     "title": {
