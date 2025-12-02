@@ -63,6 +63,10 @@ class BaseScrapper(ABC):
         for key, cfg in self.elements_cfg.items():
             extracted[key] = self._get_element(soup, cfg)
 
+        content = extracted.get("content")
+        if not content:
+            return None
+
         article_data = ArticleInfo(
             link,
             extracted["title"],
