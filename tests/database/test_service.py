@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from src.database.service import get_media, post_article, get_last_published_date
 from tests.base_test_db import TestBaseCase
@@ -86,7 +86,7 @@ class TestServiceCase(TestBaseCase):
             self.session.add(media)
             self.session.flush()
 
-            published_date_1 = datetime(2012, 12, 12, 12, 12, tzinfo=timezone.utc)
+            published_date_1 = datetime(2012, 12, 12, 12, 12, 1, tzinfo=timezone.utc)
             published_date_2 = datetime(2015, 12, 13, 13, 13, tzinfo=timezone.utc)
             media_id = media.id
             articles = [
@@ -115,7 +115,7 @@ class TestServiceCase(TestBaseCase):
 
             retrieved_date = get_last_published_date(media)
 
-            self.assertEqual(retrieved_date, published_date_2)
+            self.assertEqual(retrieved_date, published_date_2 + timedelta(seconds=1))
 
     @patch("src.database.service.get_session")
     def test_last_published_date_different_media(self, mock_get_session):
@@ -162,8 +162,8 @@ class TestServiceCase(TestBaseCase):
             retrieved_date_1 = get_last_published_date(medias[0])
             retrieved_date_2 = get_last_published_date(medias[1])
 
-            self.assertEqual(retrieved_date_1, published_date_1)
-            self.assertEqual(retrieved_date_2, published_date_2)
+            self.assertEqual(retrieved_date_1, published_date_1 + timedelta(seconds=1))
+            self.assertEqual(retrieved_date_2, published_date_2 + timedelta(seconds=1))
 
 if __name__ == "__main__":
     unittest.main()

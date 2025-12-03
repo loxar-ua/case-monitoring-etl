@@ -5,7 +5,7 @@ from datetime import datetime
 from src.scrapper.scrappers import ArticleInfo
 
 from src.database.models.media import Media
-from src.utils.get_response import get_response
+from src.database.get_response import get_response
 
 
 class BaseScrapper(ABC):

@@ -11,6 +11,7 @@ def get_connection(url: str = None) -> Engine:
     """Connects to the PostgreSQL database and returns the engine"""
     if url:
         engine = create_engine(url, echo=True)
+
         return engine
 
     load_dotenv()

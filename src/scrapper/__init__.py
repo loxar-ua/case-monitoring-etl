@@ -29,7 +29,7 @@ SCRAPPER_MAP = {
 
 SCRAPPER_DATE_CONFIG = {
     "Українська Правда": ScrapperDateConfig(
-            datetime(2025, 7, 7, 17, 5, tzinfo=timezone.utc),
-            datetime.now(timezone.utc),
+            datetime(2025, 1, 28, 17 , 50, tzinfo=timezone.utc),
+            datetime(2025, 7, 7, 17, 4, tzinfo=timezone.utc),
         )
 }

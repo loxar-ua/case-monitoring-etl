@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timezone
 import re
 
-from src.utils.get_response import get_response
+from src.database.get_response import get_response
 from . import LinkInfo
 
 def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, end_date, ):
