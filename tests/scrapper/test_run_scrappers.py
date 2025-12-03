@@ -24,8 +24,8 @@ TEST_URL_2 = "https://bihus.info/ne-bulo-ni-zvuku-ni-svystu-vidrazu-pidnyalas-ve
 class TestRunScrappersCase(TestBaseCase):
 
     @patch("src.database.service.get_session")
-    @patch('src.utils.get_response.requests.get')
-    @patch('src.utils.get_response.random.uniform')
+    @patch('src.database.get_response.requests.get')
+    @patch('src.database.get_response.random.uniform')
     def test_run_scrappers(self, mock_uniform, mock_get, mock_get_session):
         """Checks whether the scraper works correctly:
         Initiates scrappers appropriate to media.

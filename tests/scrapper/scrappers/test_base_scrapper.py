@@ -19,8 +19,8 @@ class TestBaseScrapper(unittest.TestCase):
 
         self.scrapper = BihusInfoScrapper(media_orm)
 
-    @patch('src.utils.get_response.requests.get')
-    @patch('src.utils.get_response.random.uniform')
+    @patch('src.database.get_response.requests.get')
+    @patch('src.database.get_response.random.uniform')
     def test__get_article_soup(self, mock_uniform, mock_get):
         """Test _get_soup return correct """
 

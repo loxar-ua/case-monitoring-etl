@@ -5,7 +5,7 @@ from datetime import datetime
 from src.scrapper.scrappers import ArticleInfo
 
 from src.database.models.media import Media
-from src.utils.get_response import get_response
+from src.database.get_response import get_response
 
 
 class BaseScrapper(ABC):
@@ -62,6 +62,10 @@ class BaseScrapper(ABC):
 
         for key, cfg in self.elements_cfg.items():
             extracted[key] = self._get_element(soup, cfg)
+
+        content = extracted.get("content")
+        if not content:
+            return None
 
         article_data = ArticleInfo(
             link,

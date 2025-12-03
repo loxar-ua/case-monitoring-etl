@@ -45,8 +45,8 @@ class CommonScrapperTestCase(ABC):
 
         self.scrapper = self.scrapper_class(media_orm)
 
-    @patch('src.utils.get_response.requests.get')
-    @patch('src.utils.get_response.random.uniform')
+    @patch('src.database.get_response.requests.get')
+    @patch('src.database.get_response.random.uniform')
     def test_get_links(self, mock_uniform, mock_get):
         """Test get_links returns correct links for start_date and end_date.
         When start_date is in end of previous sitemap
@@ -62,8 +62,8 @@ class CommonScrapperTestCase(ABC):
         self.assertEqual(len(retrieved), len(data['expected_links']))
         self.assertEqual(retrieved, data['expected_links'])
 
-    @patch('src.utils.get_response.requests.get')
-    @patch('src.utils.get_response.random.uniform')
+    @patch('src.database.get_response.requests.get')
+    @patch('src.database.get_response.random.uniform')
     def test_parse_article(self, mock_uniform, mock_get):
         """Test parse_article returns correct article.
         Using all other _get_element functions"""
