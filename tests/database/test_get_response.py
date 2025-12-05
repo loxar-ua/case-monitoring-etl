@@ -3,14 +3,14 @@ from unittest.mock import patch, MagicMock
 import requests
 
 from tests.helpers import create_mock_response
-from src.utils.get_response import get_response, HEADERS, TIMEOUT
+from src.database.get_response import get_response, HEADERS, TIMEOUT
 
 TEST_URL = "https://example.com"
 
 class TestGetResponseCase(unittest.TestCase):
 
-    @patch('src.utils.get_response.requests.get')
-    @patch('src.utils.get_response.random.uniform')
+    @patch('src.database.get_response.requests.get')
+    @patch('src.database.get_response.random.uniform')
     def test_get_response_with_success(self, mock_uniform, mock_get):
         """This test checks whether get_response function
         will handle successful request correctly"""
@@ -28,8 +28,8 @@ class TestGetResponseCase(unittest.TestCase):
         mock_get.assert_called_once_with(url=TEST_URL, headers=HEADERS, timeout=TIMEOUT)
         self.assertEqual(response.text, mock_response.text)
 
-    @patch('src.utils.get_response.requests.get')
-    @patch('src.utils.get_response.random.uniform')
+    @patch('src.database.get_response.requests.get')
+    @patch('src.database.get_response.random.uniform')
     def test_get_response_block(self, mock_uniform, mock_get):
         """This test checks whether get_response function
          will handle block correctly"""
@@ -41,8 +41,8 @@ class TestGetResponseCase(unittest.TestCase):
 
         self.assertEqual(response, None)
 
-    @patch('src.utils.get_response.requests.get')
-    @patch('src.utils.get_response.random.uniform')
+    @patch('src.database.get_response.requests.get')
+    @patch('src.database.get_response.random.uniform')
     def test_get_response_error(self, mock_uniform, mock_get):
         """This test checks whether get_response function
         will handle different error types correctly"""
