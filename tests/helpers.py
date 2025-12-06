@@ -75,6 +75,15 @@ URL_TO_FIXTURE_MAP = {
         'hromadske/https_hromadske_ua_sitemaps_posts_2025_12.xml',
         "https://hromadske.ua/svit/255883-v-universyteti-ssha-ziavytsia-tsilyy-kurs-pro-muzychnu-karyeru-k-pop-artysta":
         "hromadske/https_hromadske_ua_svit_255883-v-universyteti-ssha-ziavytsia-tsilyy-kurs-pro-muzychnu-karyeru-k-pop-artysta.html",
+
+
+        "https://babel.ua/sitemap_full.xml":
+        "babel/sitemap_full.xml",
+        "https://babel.ua/ukrainian/default/2025/11-12-11-26.xml":
+        "babel/11-12-11-26.xml",
+        "https://babel.ua/news/122971-turechchina-pidtverdila-zagibel-20-viyskovih-pid-chas-avariji-litaka-c-130":
+        "babel/122971-turechchina-pidtverdila-zagibel-20-viyskovih-pid-chas-avariji-litaka-c-130.html",
+
     }
 
 def create_mock_response(url, *args, **kwargs):

@@ -6,6 +6,49 @@ from src.utils.parse_chesno_date import parse_chesno_date
 from src.utils.parse_texty_date import parse_texty_date
 from src.utils.get_publish_at_pravda import parse_uk_date
 
+BABEL_CFG = {
+    "title": {
+        "tag_name": "meta",
+        "tag_attrs": {"property": "og:title"},
+        "formatter": str,
+        "use_content_attr": True,
+    },
+    "author": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "c-post-data-box"},
+    "formatter": lambda tag: (
+        tag.find("dt", string="Автор:")
+           .find_next_sibling("dd")
+           .get_text(strip=True)
+        if tag and tag.find("dt", string="Автор:")
+        else None
+    ),
+    },
+    "featured_image_url": {
+        "tag_name": "meta",
+        "tag_attrs": {"property": "og:image"},
+        "formatter": str
+    },
+    "published_at": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "c-post-data-box"},
+    "formatter": lambda tag: (
+        datetime.fromisoformat(tag.find("time").get("datetime"))
+        if tag and tag.find("time")
+        else None
+    ),
+    },
+
+    "content": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "c-post-text js-article-content"},
+    "formatter": normalize_text,
+},
+
+
+
+}
+
 HROMADSKE_CFG = {
     "title": {
         "tag_name": "meta",
