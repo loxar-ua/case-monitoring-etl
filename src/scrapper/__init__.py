@@ -5,6 +5,7 @@ from src.scrapper.scrappers.texty_scrapper import TextyScrapper
 from src.scrapper.scrappers.tyzhden_scrapper import TyzhdenScrapper
 from src.scrapper.scrappers.nashi_groshi_scrapper import NashiGroshiScrapper
 from src.scrapper.scrappers.pravda_scrapper import PravdaScrapper
+from src.scrapper.scrappers.hromadske_scrapper import HromadskeScrapper
 from collections import namedtuple
 from datetime import datetime, timezone
 
@@ -24,12 +25,13 @@ SCRAPPER_MAP = {
     "Центр протидії корупції": AntacScrapper,
     "Рух Чесно": ChesnoScrapper,
     "Українська Правда": PravdaScrapper,
+    "Громадське": HromadskeScrapper
 
 }
 
 SCRAPPER_DATE_CONFIG = {
-    "Українська Правда": ScrapperDateConfig(
-            datetime(2025, 1, 28, 17 , 50, tzinfo=timezone.utc),
-            datetime(2025, 7, 7, 17, 4, tzinfo=timezone.utc),
+    "Громадське": ScrapperDateConfig(
+            datetime(2025, 1, 1, 0 , 50, tzinfo=timezone.utc),
+            datetime(2025, 10, 1, 10 ,  tzinfo=timezone.utc),
         )
 }
