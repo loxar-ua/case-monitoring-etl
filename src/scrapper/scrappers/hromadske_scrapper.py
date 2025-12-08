@@ -21,5 +21,9 @@ class HromadskeScrapper(BaseScrapper):
             start_date=start_date,
             end_date=end_date,
         )
+        links = [
+            link for link in links
+            if  "/ru/" not in link and "/en/" not in link
+        ]
 
         return links

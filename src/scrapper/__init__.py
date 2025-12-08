@@ -32,8 +32,8 @@ SCRAPPER_MAP = {
 }
 
 SCRAPPER_DATE_CONFIG = {
-    "Бабель": ScrapperDateConfig(
-            datetime(2025, 1, 1, 0 , 50, tzinfo=timezone.utc),
+    "Громадське": ScrapperDateConfig(
+            datetime(2025, 11, 1, 0 , 50, tzinfo=timezone.utc),
             datetime.now(timezone.utc),
         )
 }
