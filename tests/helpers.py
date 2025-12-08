@@ -68,6 +68,22 @@ URL_TO_FIXTURE_MAP = {
         "https://www.pravda.com.ua/news/2025/12/01/8009694/":
         "pravda/https_www_pravda_com_uanews202512018009694.html",
 
+
+        'https://hromadske.ua/sitemap.xml':
+        "hromadske/sitemap.xml",
+        'https://hromadske.ua/sitemaps/posts/2025/12.xml':
+        'hromadske/https_hromadske_ua_sitemaps_posts_2025_12.xml',
+        "https://hromadske.ua/svit/255883-v-universyteti-ssha-ziavytsia-tsilyy-kurs-pro-muzychnu-karyeru-k-pop-artysta":
+        "hromadske/https_hromadske_ua_svit_255883-v-universyteti-ssha-ziavytsia-tsilyy-kurs-pro-muzychnu-karyeru-k-pop-artysta.html",
+
+
+        "https://babel.ua/sitemap_full.xml":
+        "babel/sitemap_full.xml",
+        "https://babel.ua/ukrainian/default/2025/11-12-11-26.xml":
+        "babel/11-12-11-26.xml",
+        "https://babel.ua/news/122971-turechchina-pidtverdila-zagibel-20-viyskovih-pid-chas-avariji-litaka-c-130":
+        "babel/122971-turechchina-pidtverdila-zagibel-20-viyskovih-pid-chas-avariji-litaka-c-130.html",
+
     }
 
 def create_mock_response(url, *args, **kwargs):

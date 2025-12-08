@@ -18,7 +18,7 @@ class Article(Base):
     content: Mapped[str] = mapped_column(String)
     published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     embedding: Mapped[list] = mapped_column(Vector(1), default=None, nullable=True) #TODO: change dimension size and list type
-    is_relevant: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_checked: Mapped[bool] = mapped_column(Boolean, default=False)
 
     cluster_id: Mapped[int] = mapped_column(ForeignKey("cluster.id"), nullable=True)
     cluster: Mapped["Cluster"] = relationship(back_populates="articles")

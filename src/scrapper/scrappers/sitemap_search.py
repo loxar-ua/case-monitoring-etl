@@ -39,11 +39,12 @@ def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, 
             for url_tag in urlset_tag.find_all(recursive=False):
                 combined_sub_sitemap.urlset.append(url_tag)
 
-    article_urls = [LinkInfo(url.find("loc").text.strip(),
-                             datetime.fromisoformat(url.find("lastmod").text)
-                             .replace(tzinfo=timezone.utc))
-                    for url in combined_sub_sitemap.urlset]
-
+    article_urls = [
+        LinkInfo(url.find("loc").text.strip(),
+                 datetime.fromisoformat(url.find("lastmod").text).replace(tzinfo=timezone.utc))
+        for url in combined_sub_sitemap.urlset
+        if url.find("loc") is not None and url.find("lastmod") is not None
+    ]
     # Get articles that only fall within a specified time interval
     article_urls = list(filter(
         lambda x: start_date <= x.datetime <= end_date,
