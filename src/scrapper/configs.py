@@ -6,6 +6,46 @@ from src.utils.parse_chesno_date import parse_chesno_date
 from src.utils.parse_texty_date import parse_texty_date
 from src.utils.get_publish_at_pravda import parse_uk_date
 
+CENZOR_CFG = {
+    "title": {
+        "tag_name": "meta",
+        "tag_attrs": {"property": "og:title"},
+        "formatter": str,
+        "use_content_attr": True,
+    },
+    "author": {
+    "tag_name": "span",
+    "tag_attrs": {"class": "news-author__name"},
+    "formatter": lambda tag: (
+        tag.find("a").get_text(strip=True)
+        if tag and tag.find("a")
+        else None
+    ),
+},
+    "featured_image_url": {
+        "tag_name": "meta",
+        "tag_attrs": {"property": "og:image"},
+        "formatter": str
+    },
+    "published_at": {
+    "tag_name": "time",
+    "tag_attrs": {"class": "g-time"},
+    "formatter": lambda tag: (
+        datetime.fromisoformat(tag.get("datetime"))
+        if tag
+        else None)
+    },
+    "content": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "news-text"},
+    "formatter": lambda tag: (
+        "\n".join(p.get_text(strip=True) for p in tag.find_all("p")[1:])
+        if tag and tag.find_all("p")
+        else None
+    ),
+},
+}
+
 BABEL_CFG = {
     "title": {
         "tag_name": "meta",
@@ -38,15 +78,11 @@ BABEL_CFG = {
         else None
     ),
     },
-
     "content": {
     "tag_name": "div",
     "tag_attrs": {"class": "c-post-text js-article-content"},
     "formatter": normalize_text,
-},
-
-
-
+    },
 }
 
 HROMADSKE_CFG = {
