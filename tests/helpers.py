@@ -84,11 +84,6 @@ URL_TO_FIXTURE_MAP = {
         "https://babel.ua/news/122971-turechchina-pidtverdila-zagibel-20-viyskovih-pid-chas-avariji-litaka-c-130":
         "babel/122971-turechchina-pidtverdila-zagibel-20-viyskovih-pid-chas-avariji-litaka-c-130.html",
 
-        "https://assets.censor.net/sitemap/censor.net/sitemap_uk.xml":"cenzor/sitemap_uk.xml",
-        "https://assets.censor.net/sitemap/censor.net/sitemap_uk_resonance_202512.xml":
-            "cenzor/sitemap_uk_resonance_202512.xml",
-        "https://censor.net/biz/resonance/3589375/skilky-ukrayina-vytratyla-na-zahyst-energetyky":
-            "cenzor/skilky-ukrayina-vytratyla-na-zahyst-energetyky.html",
     }
 
 def create_mock_response(url, *args, **kwargs):

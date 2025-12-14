@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from bs4 import BeautifulSoup
 
-from src.scrapper.scrappers.bihus_info_scrapper import BihusInfoScrapper
+from src.scrapper.scrappers.all_scrappers import BihusScrapper
 from src.database.models.media import Media
 from src.database.models.article import Article
 from tests.helpers import create_mock_response, URL_TO_FIXTURE_MAP, FIXTURE_PATH
@@ -17,7 +17,7 @@ class TestBaseScrapper(unittest.TestCase):
             is_active=True
         )
 
-        self.scrapper = BihusInfoScrapper(media_orm)
+        self.scrapper = BihusScrapper(media_orm)
 
     @patch('src.database.get_response.requests.get')
     @patch('src.database.get_response.random.uniform')
