@@ -1,5 +1,5 @@
 import unittest
-from src.scrapper.scrappers.nashi_groshi_scrapper import NashiGroshiScrapper
+from src.scrapper.scrappers.all_scrappers import NashiGroshiScrapper
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 from datetime import datetime, timezone
 

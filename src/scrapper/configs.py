@@ -6,7 +6,7 @@ from src.utils.parse_chesno_date import parse_chesno_date
 from src.utils.parse_texty_date import parse_texty_date
 from src.utils.get_publish_at_pravda import parse_uk_date
 
-CENZOR_CFG = {
+ZN_CFG = {
     "title": {
         "tag_name": "meta",
         "tag_attrs": {"property": "og:title"},
@@ -14,11 +14,11 @@ CENZOR_CFG = {
         "use_content_attr": True,
     },
     "author": {
-    "tag_name": "span",
-    "tag_attrs": {"class": "news-author__name"},
+    "tag_name": "div",
+    "tag_attrs": {"class": "article-author__box"},
     "formatter": lambda tag: (
-        tag.find("a").get_text(strip=True)
-        if tag and tag.find("a")
+        tag.find("a", class_="article-author__name").get_text(strip=True)
+        if tag and tag.find("a", class_="article-author__name")
         else None
     ),
 },
@@ -28,21 +28,17 @@ CENZOR_CFG = {
         "formatter": str
     },
     "published_at": {
-    "tag_name": "time",
-    "tag_attrs": {"class": "g-time"},
-    "formatter": lambda tag: (
-        datetime.fromisoformat(tag.get("datetime"))
-        if tag
-        else None)
-    },
-    "content": {
     "tag_name": "div",
-    "tag_attrs": {"class": "news-text"},
+    "tag_attrs": {"class": "content-date"},
     "formatter": lambda tag: (
-        "\n".join(p.get_text(strip=True) for p in tag.find_all("p")[1:])
-        if tag and tag.find_all("p")
+        datetime.strptime(tag.get_text(strip=True), "%d %B, %Y, %H:%M")
+        if tag and tag.get_text(strip=True)
         else None
     ),
+    },
+    "content": {
+    "tag_name": "article",
+    "formatter": normalize_text
 },
 }
 

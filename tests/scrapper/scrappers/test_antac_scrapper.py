@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime, timezone
-from src.scrapper.scrappers.antac_scrapper import AntacScrapper
+from src.scrapper.scrappers.all_scrappers import AntacScrapper
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://antac.org.ua/en/news/how-avakov-venediktova-and-pechersk-court-rescue-the-agrobaron-bakhmatyuk-and-his-property/"

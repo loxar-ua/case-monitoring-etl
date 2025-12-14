@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime, timezone, timedelta
-from src.scrapper.scrappers.chesno_scrapper import ChesnoScrapper
+from src.scrapper.scrappers.all_scrappers import ChesnoScrapper
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://www.chesno.org/post/6645/"

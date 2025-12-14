@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime, timezone, timedelta
-from src.scrapper.scrappers.babel_scrapper import BabelScrapper
+from src.scrapper.scrappers.all_scrappers import BabelScrapper
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://babel.ua/news/122971-turechchina-pidtverdila-zagibel-20-viyskovih-pid-chas-avariji-litaka-c-130"
