@@ -77,3 +77,11 @@ TyzhdenScrapper = create_scrapper_class(
     elements_cfg= TYZHDEN_CFG,
     sitemap_pattern=r"https://tyzhden.ua/wp-sitemap-posts-post-(12[4-9]|1[3-9]\d+|[2-9]\d+)\.xml",
 )
+#Espreso
+
+EspresoScrapper = create_scrapper_class(
+    name="EspresoScrapper",
+    elements_cfg= ESPRESDO_CFG,
+    sitemap_pattern=r"https://espreso.tv/sitemap_news_1.xml",
+
+)
