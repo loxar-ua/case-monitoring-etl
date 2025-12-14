@@ -67,7 +67,6 @@ class BaseScrapper(ABC):
         published_at = extracted.get("published_at")
         if not content or not published_at:
             return None
-        print(content)
         article_data = ArticleInfo(
             link,
             extracted["title"],
