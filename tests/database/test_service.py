@@ -2,7 +2,9 @@ import unittest
 from unittest.mock import patch
 from datetime import datetime, timezone, timedelta
 
-from src.database.service import get_media, post_article, get_last_published_date
+from src.database.models.category import Category
+from src.database.models.cluster import Cluster
+from src.database.service import get_media, post_article, get_last_published_date, form_cluster
 from tests.base_test_db import TestBaseCase
 from src.database.models.media import Media
 from src.database.models.article import Article
@@ -164,6 +166,78 @@ class TestServiceCase(TestBaseCase):
 
             self.assertEqual(retrieved_date_1, published_date_1 + timedelta(seconds=1))
             self.assertEqual(retrieved_date_2, published_date_2 + timedelta(seconds=1))
+
+    @patch("src.database.service.get_session")
+    def test_form_cluster_work(self, mock_get_session):
+        """Tests the correct work of cluster forming"""
+
+        mock_get_session.return_value = self.session
+
+        with patch.object(self.session, 'commit') as mock_commit, \
+                patch.object(self.session, 'close') as mock_close:
+            media = Media(name="test_media_1", sitemap_index_url="index.xml", is_active=True)
+
+            self.session.add(media)
+            self.session.flush()
+
+            published_date_1 = datetime(2012, 12, 12, 12, 12, tzinfo=timezone.utc)
+            published_date_2 = datetime(2015, 12, 13, 13, 13, tzinfo=timezone.utc)
+
+            articles = [
+                Article(
+                    link="link_1",
+                    title="title",
+                    content="content",
+                    published_at=published_date_1,
+                    media_id=media.id
+                ),
+                Article(
+                    link="link_2",
+                    title="title",
+                    content='content',
+                    published_at=published_date_2,
+                    media_id=media.id
+                )
+            ]
+
+            categories = [
+                Category(
+                    id=1,
+                    name='Шоубіз'
+                ),
+                Category(
+                    id=2,
+                    name='Політика'
+                )
+            ]
+
+
+            self.session.add_all(articles)
+            self.session.add_all(categories)
+            self.session.flush()
+
+            cluster_info = {
+                "cluster_id": 1,
+                "is_relevant": True,
+                "title": "Name",
+                "summary": "Summary",
+                "categories": [1, 2],
+                "articles_ids": [articles[0].id, articles[1].id]}
+
+            form_cluster(cluster_info)
+
+            retrieved_articles = self.session.query(Article).all()
+            retrieved_cluster = self.session.query(Cluster).first()
+
+            self.assertIn(retrieved_articles[0], retrieved_cluster.articles)
+            self.assertIn(retrieved_articles[1], retrieved_cluster.articles)
+            self.assertEqual(retrieved_cluster.name, 'Name')
+            self.assertEqual(retrieved_cluster.summary, 'Summary')
+            self.assertEqual(sorted(c.id for c in retrieved_cluster.categories), [1, 2])
+            self.assertEqual(retrieved_cluster.is_relevant, True)
+
+
+
 
 if __name__ == "__main__":
     unittest.main()

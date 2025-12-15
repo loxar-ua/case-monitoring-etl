@@ -1,8 +1,10 @@
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import func
+from sqlalchemy import func, select
 
 from datetime import datetime, timedelta
 
+from .models.category import Category
+from .models.cluster import Cluster
 from .session import get_session
 from .models.media import Media
 from .models.article import Article
@@ -72,6 +74,41 @@ def post_article(article_tuple: ArticleInfo) -> None:
     try:
 
         session.add(article)
+        session.commit()
+
+    except SQLAlchemyError as error:
+        print(error) #TODO: log this
+        session.rollback()
+
+    finally:
+        session.close()
+
+def form_cluster(cluster_info: dict):
+    """Saves a single cluster to the database.
+    Takes dict with cluster info, creates cluster with
+    title and summary, connects articles."""
+
+    session = get_session()
+
+    statement = select(Category).where(Category.id.in_(set(cluster_info['categories'])))
+    categories = session.scalars(statement).all()
+
+    statement = select(Article).where(Article.id.in_(set(cluster_info['articles_ids'])))
+    articles = session.scalars(statement).all()
+
+    cluster = Cluster(
+        id = cluster_info['cluster_id'],
+        name = cluster_info['title'],
+        summary = cluster_info['summary'],
+        categories = categories,
+        is_relevant = cluster_info['is_relevant']
+    )
+
+    try:
+        for article in articles:
+            article.cluster_id = cluster_info['cluster_id']
+
+        session.add(cluster)
         session.commit()
 
     except SQLAlchemyError as error:
