@@ -21,12 +21,13 @@ SCRAPPER_MAP = {
     "Громадське": HromadskeScrapper,
     "Бабель": BabelScrapper,
     "Еспресо": EspresoScrapper,
+    "Радіо Свобода": RadioSvobodaScrapper,
 
 }
 
 SCRAPPER_DATE_CONFIG = {
     "Еспресо": ScrapperDateConfig(
-            datetime(2025, 9, 14, 0, 50, tzinfo=timezone.utc),
+            datetime(2025, 11, 28, 0, 50, tzinfo=timezone.utc),
             datetime.now(timezone.utc),
         )
 }
