@@ -26,8 +26,8 @@ SCRAPPER_MAP = {
 }
 
 SCRAPPER_DATE_CONFIG = {
-    "Еспресо": ScrapperDateConfig(
-            datetime(2025, 11, 28, 0, 50, tzinfo=timezone.utc),
+    "Радіо Свобода": ScrapperDateConfig(
+            datetime(2025, 11, 22, 0, 50, tzinfo=timezone.utc),
             datetime.now(timezone.utc),
         )
 }
