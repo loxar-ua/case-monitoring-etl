@@ -23,7 +23,10 @@ def parse_ukr_datetime(tag_date, tag_time):
     }
     date_text = tag_date.get_text(strip=True).split()
     day = int(date_text[0])
-    month = ukr_months[date_text[1].strip(',')]
+    month_key = date_text[1].strip(',').lower()
+    month = ukr_months.get(month_key)
+    if month is None:
+        return None
     year = int(date_text[2])
     hour, minute = map(int, tag_time.get_text(strip=True).split(':'))
     return (

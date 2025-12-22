@@ -90,6 +90,14 @@ URL_TO_FIXTURE_MAP = {
         "https://espreso.tv/sitemap.xml":"espreso/ssitemap.xml",
         "https://espreso.tv/news-bilorus-pogodilas-pripiniti-zapuskati-povitryani-kuli-na-litvu":
             "espreso/news-bilorus-pogodilas-pripiniti-zapuskati-povitryani-kuli-na-litvu.html",
+
+
+        "https://www.radiosvoboda.org/sitemap_9_latest.xml.gz":
+        "svoboda/part1.xml",
+        "https://www.radiosvoboda.org/sitemap.xml":"svoboda/sitemap-index.xml",
+        "https://www.radiosvoboda.org/a/news-rosia-ataka-droniv/33629716.html":
+            "svoboda/ataka_droniv.html",
+
     }
 
 def create_mock_response(url, *args, **kwargs):

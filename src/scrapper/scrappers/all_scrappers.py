@@ -62,7 +62,6 @@ NashiGroshiScrapper = create_scrapper_class(
     elements_cfg= GROSHI_CFG,
     sitemap_pattern=r"https://nashigroshi\.org/sitemap-pt-post-(202[5-9]|20[3-9]\d)-\d{2}\.xml"
 )
-
 #texty
 
 TextyScrapper = create_scrapper_class(
@@ -84,4 +83,12 @@ EspresoScrapper = create_scrapper_class(
     elements_cfg= ESPRESDO_CFG,
     sitemap_pattern=r"https://espreso.tv/sitemap_news_1.xml",
 
+)
+
+#Radio Svoboda
+
+RadioSvobodaScrapper = create_scrapper_class(
+    name="RadioSvobodaScrapper",
+    elements_cfg= SVOBODA_CFG,
+    sitemap_pattern=r"https://www.radiosvoboda.org/sitemap_9_latest.xml.gz",
 )
