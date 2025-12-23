@@ -98,6 +98,16 @@ URL_TO_FIXTURE_MAP = {
         "https://www.radiosvoboda.org/a/news-rosia-ataka-droniv/33629716.html":
             "svoboda/ataka_droniv.html",
 
+
+        "https://suspilne.media/suspilne/sitemap/sitemap.xml":
+        "suspilne/sitemap.xml",
+        "https://suspilne.media/suspilne/sitemap/post-sitemap1.xml":
+        "suspilne/news1.xml",
+        "https://suspilne.media/suspilne/sitemap/post-sitemap0.xml":
+        "suspilne/news0.xml",
+        "https://suspilne.media/1164200-kudrickij-pro-korupcijnu-spravu-v-energetici-ta-comu-vin-bi-ne-hotiv-ocoliti-minenergo/":
+        "suspilne/article.html"
+
     }
 
 def create_mock_response(url, *args, **kwargs):
