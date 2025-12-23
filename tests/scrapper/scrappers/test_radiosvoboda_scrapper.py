@@ -5,7 +5,7 @@ from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://www.radiosvoboda.org/a/news-rosia-ataka-droniv/33629716.html"
 
-class TestRadioSvobodacrapper(CommonScrapperTestCase, unittest.TestCase):
+class TestRadioSvobodaScrapper(CommonScrapperTestCase, unittest.TestCase):
     scrapper_class = RadioSvobodaScrapper
 
     media_data = {

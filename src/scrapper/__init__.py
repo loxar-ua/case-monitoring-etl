@@ -22,6 +22,7 @@ SCRAPPER_MAP = {
     "Бабель": BabelScrapper,
     "Еспресо": EspresoScrapper,
     "Радіо Свобода": RadioSvobodaScrapper,
+    "Суспільне":  SuspilneScrapper,
 
 }
 

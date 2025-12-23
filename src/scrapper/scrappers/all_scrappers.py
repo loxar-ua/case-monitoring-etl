@@ -92,3 +92,11 @@ RadioSvobodaScrapper = create_scrapper_class(
     elements_cfg= SVOBODA_CFG,
     sitemap_pattern=r"https://www.radiosvoboda.org/sitemap_9_latest.xml.gz",
 )
+
+#Suspilne
+
+SuspilneScrapper = create_scrapper_class(
+    name="SuspilneScrapper",
+    elements_cfg= SUSPILNE_CFG,
+    sitemap_pattern=r"https://suspilne.media/suspilne/sitemap/post-sitemap\d+\.xml",
+)

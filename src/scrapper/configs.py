@@ -7,6 +7,34 @@ from src.utils.parse_texty_date import parse_texty_date
 from src.utils.get_publish_at_pravda import parse_uk_date
 from src.utils.get_date_espreso import parse_ukr_datetime
 
+SUSPILNE_CFG = {
+    "title": {
+        "tag_name": "meta",
+        "tag_attrs": {"property": "og:title"},
+        "formatter": str,
+    },
+    "author": {
+        "tag_name": "meta",
+        "tag_attrs": {"name": "author"},
+        "formatter": str,
+    },
+    "featured_image_url": {
+        "tag_name": "meta",
+        "tag_attrs": {"name": "twitter:image"},
+        "formatter": str,
+    },
+    "published_at": {
+        "tag_name": "meta",
+        "tag_attrs": {"property": "article:published_time"},
+        "formatter": datetime.fromisoformat,
+    },
+    "content": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "l-article-content__container-inner c-art-c__c"},
+    "formatter": lambda tag: "\n".join([p.get_text(strip=True) for p in tag.find_all("p")])  if tag else None,
+    },
+}
+
 
 SVOBODA_CFG={
     "title": {
