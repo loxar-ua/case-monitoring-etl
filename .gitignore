@@ -2,3 +2,4 @@
 .env
 .topromptignore
 __pycache__/
+*.pyc
