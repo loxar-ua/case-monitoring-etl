@@ -1,5 +1,5 @@
 import unittest
-from src.scrapper.scrappers.tyzhden_scrapper import TyzhdenScrapper
+from src.scrapper.scrappers.all_scrappers import TyzhdenScrapper
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 from datetime import datetime, timezone, timedelta
 

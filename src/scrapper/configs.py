@@ -5,6 +5,148 @@ import re
 from src.utils.parse_chesno_date import parse_chesno_date
 from src.utils.parse_texty_date import parse_texty_date
 from src.utils.get_publish_at_pravda import parse_uk_date
+from src.utils.get_date_espreso import parse_ukr_datetime
+
+
+SVOBODA_CFG={
+    "title": {
+            "tag_name": "meta",
+            "tag_attrs": {"property": "og:title"},
+            "formatter": str,
+            "use_content_attr": True,
+            },
+    "author": {
+        "tag_name": None,
+        "tag_attrs": None,
+        "formatter": str,
+    },
+    "featured_image_url": {
+            "tag_name": "meta",
+            "tag_attrs": {"property": "og:image"},
+            "formatter": str
+        },
+    "published_at": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "published"},
+    "formatter": lambda tag: (
+        datetime.fromisoformat(
+            tag.find("time")["datetime"]
+        )
+        if tag and tag.find("time") and tag.find("time").has_attr("datetime")
+        else None
+    ),
+    },
+    "content": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "wsw"},
+    "formatter": lambda tag: "\n".join([p.get_text(strip=True) for p in tag.find_all("p")]) if tag else None,
+    },
+}
+
+ZN_CFG = {
+    "title": {
+        "tag_name": "meta",
+        "tag_attrs": {"property": "og:title"},
+        "formatter": str,
+        "use_content_attr": True,
+    },
+    "author": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "article-author__box"},
+    "formatter": lambda tag: (
+        tag.find("a", class_="article-author__name").get_text(strip=True)
+        if tag and tag.find("a", class_="article-author__name")
+        else None
+    ),
+},
+    "featured_image_url": {
+        "tag_name": "meta",
+        "tag_attrs": {"property": "og:image"},
+        "formatter": str
+    },
+    "published_at": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "content-date"},
+    "formatter": lambda tag: (
+        datetime.strptime(tag.get_text(strip=True), "%d %B, %Y, %H:%M")
+        if tag and tag.get_text(strip=True)
+        else None
+    ),
+    },
+    "content": {
+    "tag_name": "article",
+    "formatter": normalize_text
+},
+}
+
+ESPRESDO_CFG={
+    "title": {
+            "tag_name": "meta",
+            "tag_attrs": {"property": "og:title"},
+            "formatter": str,
+            "use_content_attr": True,
+            },
+    "author": {
+        "tag_name": "div",
+        "tag_attrs": {"class": "news__author_date__author"},
+        "formatter": lambda tag: (
+        tag.find("a").get_text(strip=True) if tag and tag.find("a") else None)
+    },
+    "featured_image_url": {
+            "tag_name": "meta",
+            "tag_attrs": {"property": "og:image"},
+            "formatter": str
+        },
+    "published_at": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "news__author_date"},
+    "formatter": lambda tag: parse_ukr_datetime(
+        tag.find('div', class_='news__author_date__date'),
+        tag.find('div', class_='news__author_date__time')
+    ) if tag else None,
+},
+    "content": {
+        "tag_name": "section",
+        "tag_attrs": {"class": "content_current_article"},
+        "formatter": normalize_text
+    },
+}
+
+ZN_CFG = {
+    "title": {
+        "tag_name": "meta",
+        "tag_attrs": {"property": "og:title"},
+        "formatter": str,
+        "use_content_attr": True,
+    },
+    "author": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "article-author__box"},
+    "formatter": lambda tag: (
+        tag.find("a", class_="article-author__name").get_text(strip=True)
+        if tag and tag.find("a", class_="article-author__name")
+        else None
+    ),
+},
+    "featured_image_url": {
+        "tag_name": "meta",
+        "tag_attrs": {"property": "og:image"},
+        "formatter": str
+    },
+    "published_at": {
+    "tag_name": "div",
+    "tag_attrs": {"class": "content-date"},
+    "formatter": lambda tag: (
+        datetime.strptime(tag.get_text(strip=True), "%d %B, %Y, %H:%M")
+        if tag and tag.get_text(strip=True)
+        else None
+    ),
+    },
+    "content": {
+    "tag_name": "article",
+    "formatter": normalize_text
+},
+}
 
 BABEL_CFG = {
     "title": {
@@ -38,15 +180,11 @@ BABEL_CFG = {
         else None
     ),
     },
-
     "content": {
     "tag_name": "div",
     "tag_attrs": {"class": "c-post-text js-article-content"},
     "formatter": normalize_text,
-},
-
-
-
+    },
 }
 
 HROMADSKE_CFG = {

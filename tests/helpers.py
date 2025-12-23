@@ -84,6 +84,20 @@ URL_TO_FIXTURE_MAP = {
         "https://babel.ua/news/122971-turechchina-pidtverdila-zagibel-20-viyskovih-pid-chas-avariji-litaka-c-130":
         "babel/122971-turechchina-pidtverdila-zagibel-20-viyskovih-pid-chas-avariji-litaka-c-130.html",
 
+        "https://espreso.tv/news-proekt-khochu-zhit-opublikuvav-spisok-politvyazniv-zvilnenikh-z-bilorusi":
+            "espreso/poglyad-shcho-tvoritsya-z-tsinami.html",
+        "https://espreso.tv/sitemap_news_1.xml":"espreso/sitemap_news_1.xml",
+        "https://espreso.tv/sitemap.xml":"espreso/ssitemap.xml",
+        "https://espreso.tv/news-bilorus-pogodilas-pripiniti-zapuskati-povitryani-kuli-na-litvu":
+            "espreso/news-bilorus-pogodilas-pripiniti-zapuskati-povitryani-kuli-na-litvu.html",
+
+
+        "https://www.radiosvoboda.org/sitemap_9_latest.xml.gz":
+        "svoboda/part1.xml",
+        "https://www.radiosvoboda.org/sitemap.xml":"svoboda/sitemap-index.xml",
+        "https://www.radiosvoboda.org/a/news-rosia-ataka-droniv/33629716.html":
+            "svoboda/ataka_droniv.html",
+
     }
 
 def create_mock_response(url, *args, **kwargs):

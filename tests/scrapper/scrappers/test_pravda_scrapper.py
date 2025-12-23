@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime, timezone, timedelta
-from src.scrapper.scrappers.pravda_scrapper import PravdaScrapper
+from src.scrapper.scrappers.all_scrappers import PravdaScrapper
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://www.pravda.com.ua/news/2025/12/01/8009697/"

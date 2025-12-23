@@ -17,8 +17,9 @@ class Article(Base):
     author: Mapped[str] = mapped_column(String, nullable=True)
     content: Mapped[str] = mapped_column(String)
     published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    embedding: Mapped[list] = mapped_column(Vector(1), default=None, nullable=True) #TODO: change dimension size and list type
+    dense_embedding: Mapped[list] = mapped_column(Vector(1), default=None, nullable=True) #TODO: change dimension size and list type
     is_checked: Mapped[bool] = mapped_column(Boolean, default=False)
+    sparse_embedding: Mapped[list] = mapped_column(Vector(1), default=None, nullable=True)
 
     cluster_id: Mapped[int] = mapped_column(ForeignKey("cluster.id"), nullable=True)
     cluster: Mapped["Cluster"] = relationship(back_populates="articles")

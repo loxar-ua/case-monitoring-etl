@@ -1,4 +1,6 @@
 from bs4 import BeautifulSoup
+from io import BytesIO
+import gzip
 
 from datetime import datetime, timezone
 import re
@@ -32,13 +34,18 @@ def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, 
         sub_sitemap_response = get_response(sub_sitemap_url)
         if not sub_sitemap_response:
             continue
-        sub_sitemap_soup = BeautifulSoup(sub_sitemap_response.content, "lxml-xml")
+
+        if sub_sitemap_url.endswith(".gz"):
+            xml_content = gzip.GzipFile(fileobj=BytesIO(sub_sitemap_response.content)).read()
+        else:
+            xml_content = sub_sitemap_response.content
+
+        sub_sitemap_soup = BeautifulSoup(xml_content, "lxml-xml")
 
         urlset_tag = sub_sitemap_soup.find("urlset")
         if urlset_tag:
             for url_tag in urlset_tag.find_all(recursive=False):
                 combined_sub_sitemap.urlset.append(url_tag)
-
     article_urls = [
         LinkInfo(url.find("loc").text.strip(),
                  datetime.fromisoformat(url.find("lastmod").text).replace(tzinfo=timezone.utc))

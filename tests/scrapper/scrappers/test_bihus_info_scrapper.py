@@ -1,13 +1,13 @@
 import unittest
 from datetime import datetime, timezone, timedelta
-from src.scrapper.scrappers.bihus_info_scrapper import BihusInfoScrapper
+from src.scrapper.scrappers.all_scrappers import BihusScrapper
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://bihus.info/rosijski-vijskovi-na-sumshhyni-zahopyly-zhytlovyj-budynok-a-potim-rozstrilyaly-jogo-iz-kulemeta/"
 TEST_URL_2 = "https://bihus.info/ne-bulo-ni-zvuku-ni-svystu-vidrazu-pidnyalas-velyka-pylyuka-potim-des-za-2-sekundy-posypalys-vikna-na-zhytomyrshhyni-rosijska-krylata-raketa-rozbyla-shkolu/"
 
 class TestBihusScrapper(CommonScrapperTestCase, unittest.TestCase):
-    scrapper_class = BihusInfoScrapper
+    scrapper_class = BihusScrapper
 
     media_data = {
         "name": "Bihus.Info",

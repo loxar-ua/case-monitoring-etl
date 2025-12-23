@@ -64,10 +64,10 @@ class BaseScrapper(ABC):
             extracted[key] = self._get_element(soup, cfg)
 
         content = extracted.get("content")
+        print(content)
         published_at = extracted.get("published_at")
         if not content or not published_at:
             return None
-
         article_data = ArticleInfo(
             link,
             extracted["title"],
