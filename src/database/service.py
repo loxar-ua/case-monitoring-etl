@@ -1,5 +1,5 @@
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 
 from datetime import datetime, timedelta
 
@@ -83,32 +83,57 @@ def post_article(article_tuple: ArticleInfo) -> None:
     finally:
         session.close()
 
-def form_cluster(cluster_info: dict):
+def form_clusters(clusters_info: list):
     """Saves a single cluster to the database.
     Takes dict with cluster info, creates cluster with
     title and summary, connects articles."""
 
     session = get_session()
 
-    statement = select(Category).where(Category.id.in_(set(cluster_info['categories'])))
-    categories = session.scalars(statement).all()
+    all_categories = session.scalars(select(Category)).all()
+    category_map = {c.id: c for c in all_categories}
 
-    statement = select(Article).where(Article.id.in_(set(cluster_info['articles_ids'])))
-    articles = session.scalars(statement).all()
+    new_clusters = []
+    article_updates = []
 
-    cluster = Cluster(
-        id = cluster_info['cluster_id'],
-        name = cluster_info['title'],
-        summary = cluster_info['summary'],
-        categories = categories,
-        is_relevant = cluster_info['is_relevant']
-    )
+    for cluster_info in clusters_info:
+        cluster_id = cluster_info['cluster_id']
+        article_ids = set(cluster_info['articles_ids'])
+
+        if cluster_info['is_relevant']:
+            categories = [
+                category_map[cat_id]
+                for cat_id in cluster_info['categories']
+                if cat_id in category_map
+            ]
+
+            statement = select(Article.featured_image_url).where(Article.id.in_(article_ids))
+            with session.no_autoflush:
+                images = session.scalars(statement).all()
+            image = next((x for x in images if x), None)
+
+            cluster = Cluster(
+                id = cluster_id,
+                name = cluster_info['title'],
+                summary = cluster_info['summary'],
+                categories = categories,
+                is_relevant = True,
+                featured_image_url = image
+            )
+        else:
+            cluster = Cluster(
+                id = cluster_id,
+                is_relevant = False
+            )
+
+        new_clusters.append(cluster)
+        print(cluster_id)
+        for art_id in article_ids:
+            article_updates.append({'id': art_id, 'cluster_id': cluster_id})
 
     try:
-        for article in articles:
-            article.cluster_id = cluster_info['cluster_id']
-
-        session.add(cluster)
+        session.add_all(new_clusters)
+        session.execute(update(Article), article_updates)
         session.commit()
 
     except SQLAlchemyError as error:
