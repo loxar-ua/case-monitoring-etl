@@ -65,10 +65,6 @@ def post_article(article_tuples: List[ArticleInfo]) -> None:
         logger.info("No article where given to insert")
         return
 
-    unique_by_link: dict[str, ArticleInfo] = {}
-    for article_tuple in article_tuples:
-        unique_by_link[article_tuple.link] = article_tuple
-
     articles = [Article(
         link = article_tuple.link,
         title = article_tuple.title,
@@ -77,7 +73,7 @@ def post_article(article_tuples: List[ArticleInfo]) -> None:
         published_at = article_tuple.published_at,
         content = article_tuple.content,
         media_id = article_tuple.media_id,
-    ) for article_tuple in unique_by_link.values()]
+    ) for article_tuple in article_tuples]
 
     session = get_session()
 
