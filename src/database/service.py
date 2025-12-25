@@ -19,7 +19,7 @@ def get_media() -> list[Media]:
     session = get_session()
 
     try:
-        medias = session.query(Media).filter(Media.is_active == True).all()
+        medias = session.query(Media).filter(Media.is_active == True).order_by(Media.id).all()
         return medias
 
     except SQLAlchemyError:
