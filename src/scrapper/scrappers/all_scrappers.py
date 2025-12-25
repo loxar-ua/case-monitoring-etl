@@ -11,7 +11,7 @@ def pravda_link_filter(links: list[str], *args, **kwargs) -> list[str]:
 PravdaScrapper = create_scrapper_class(
     name="PravdaScrapper",
     elements_cfg=PRAVDA_CFG,
-    sitemap_pattern=r"https://www\.pravda\.com\.ua/sitemap/sitemap-(202[2-9]|20[3-9]\d)-\d{2}\.xml\.gz",
+    sitemap_pattern=r"https://www\.pravda\.com\.ua/sitemap/sitemap-(202[5-9]|20[3-9]\d)-\d{2}\.xml\.gz",
     link_filter_func=pravda_link_filter
 )
 
@@ -26,7 +26,7 @@ AntacScrapper = create_scrapper_class(
 BabelScrapper = create_scrapper_class(
     name="BabelScrapper",
     elements_cfg=BABEL_CFG,
-    sitemap_pattern=r"https://babel\.ua/ukrainian/default/202[2-9]/(0[1-9]|1[0-1])-(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])\.xml",
+    sitemap_pattern=r"https://babel\.ua/ukrainian/default/2025/(0[1-9]|1[0-1])-(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])\.xml",
 )
 
 # bihus
@@ -60,7 +60,7 @@ HromadskeScrapper = create_scrapper_class(
 NashiGroshiScrapper = create_scrapper_class(
     name="NashiGroshiScrapper",
     elements_cfg= GROSHI_CFG,
-    sitemap_pattern=r"https://nashigroshi\.org/sitemap-pt-post-(202[2-9]|20[3-9]\d)-\d{2}\.xml"
+    sitemap_pattern=r"https://nashigroshi\.org/sitemap-pt-post-(202[5-9]|20[3-9]\d)-\d{2}\.xml"
 )
 #texty
 
@@ -74,7 +74,7 @@ TextyScrapper = create_scrapper_class(
 TyzhdenScrapper = create_scrapper_class(
     name="TyzhdenScrapper",
     elements_cfg= TYZHDEN_CFG,
-    sitemap_pattern=r"https://tyzhden.ua/wp-sitemap-posts-post-(12[2-9]|1[3-9]\d+|[2-9]\d+)\.xml",
+    sitemap_pattern=r"https://tyzhden.ua/wp-sitemap-posts-post-(12[4-9]|1[3-9]\d+|[2-9]\d+)\.xml",
 )
 #Espreso
 
