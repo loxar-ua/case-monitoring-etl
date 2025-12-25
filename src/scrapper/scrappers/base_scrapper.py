@@ -80,6 +80,6 @@ class BaseScrapper(ABC):
         )
 
         logger.info("Parsed article: media: %s, title: %s, published date: %s",
-                    article_data.title, self.media_orm.name, article_data.published_at)
+                    self.media_orm.name, article_data.title, article_data.published_at)
 
         return article_data
