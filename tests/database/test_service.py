@@ -58,7 +58,7 @@ class TestServiceCase(TestBaseCase):
                 media_id
             )
 
-            post_article(article)
+            post_article([article])
 
             mock_commit.assert_called_once()
             mock_close.assert_called_once()

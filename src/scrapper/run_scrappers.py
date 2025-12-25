@@ -1,9 +1,12 @@
 from datetime import datetime, timezone
+from math import ceil
 
 import src.database.service as db_service
 from src.scrapper import ScrapperDateConfig, SCRAPPER_MAP
 
-def run_scrappers(operational_mode: bool, scrapper_date_config: dict[str, ScrapperDateConfig] = None) -> None:
+def run_scrappers(operational_mode: bool,
+                  scrapper_date_config: dict[str, ScrapperDateConfig] = None,
+                  batch_size: int = 100) -> None:
     """Initiates scrappers appropriate to media.
     Searches through sitemaps and scraps all links from time of last
     scrapping to this date. Then takes all this links and parses
@@ -29,8 +32,19 @@ def run_scrappers(operational_mode: bool, scrapper_date_config: dict[str, Scrapp
         links = scrapper.get_links(start_date=START_DATE, end_date=END_DATE)
         if not links: continue
 
-        for link in links:
-            article_info = scrapper.parse_article(link)
-            if not article_info:
-                continue
-            db_service.post_article(article_info)
+        links_size = len(links)
+        chunk_number = ceil(links_size / batch_size)
+
+        for i in range(chunk_number):
+            chunk_start = i * batch_size
+            chunk_end = min((i + 1) * batch_size, links_size)
+
+            article_infos = []
+            for link in links[chunk_start:chunk_end]:
+                article_info = scrapper.parse_article(link)
+
+                if not article_info:
+                    continue
+                article_infos.append(article_info)
+
+            db_service.post_article(article_infos)
