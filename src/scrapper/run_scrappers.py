@@ -31,13 +31,12 @@ def run_scrappers(operational_mode: bool,
             if not START_DATE:
                 START_DATE = datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
             END_DATE = datetime.now(tz=timezone.utc)
-        elif scrapper_date_config: # Base load mode
+        else: # Base load mode
             if not media.name in scrapper_date_config:
+                logger.error(f"Media isn't configer in scrapper_date_config")
                 continue
             START_DATE = scrapper_date_config[media.name].start_date
             END_DATE = scrapper_date_config[media.name].end_date
-        else: # Baseload mode, but without date config means no articles will be parsed
-            return # TODO: log this
 
         logger.info(
             (f"Starting scrapping {media.name}. ",
