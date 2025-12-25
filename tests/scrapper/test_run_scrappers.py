@@ -7,7 +7,7 @@ from src.database.models.article import Article
 from src.database.models.media import Media
 from src.scrapper import ScrapperDateConfig
 from src.scrapper.run_scrappers import run_scrappers
-from tests.base_test_db import TestBaseCase
+from tests.base_test_db import BDTestCase
 from tests.helpers import create_mock_response
 
 SCRAPPER_DATE_CONFIG = {
@@ -21,7 +21,7 @@ TEST_URL_1 = "https://bihus.info/rosijski-vijskovi-na-sumshhyni-zahopyly-zhytlov
 TEST_URL_2 = "https://bihus.info/ne-bulo-ni-zvuku-ni-svystu-vidrazu-pidnyalas-velyka-pylyuka-potim-des-za-2-sekundy-posypalys-vikna-na-zhytomyrshhyni-rosijska-krylata-raketa-rozbyla-shkolu/"
 
 
-class TestRunScrappersCase(TestBaseCase):
+class BDTestRunScrappersCase(BDTestCase):
 
     @patch("src.database.service.get_session")
     @patch('src.database.get_response.requests.get')

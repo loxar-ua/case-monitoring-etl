@@ -8,6 +8,8 @@ from .session import get_session
 from .models.media import Media
 from .models.article import Article
 from src.scrapper.scrappers.base_scrapper import ArticleInfo
+from ..logger import logger
+
 
 def get_media() -> list[Media]:
     """Gets all media sites marked as 'is_active'.
@@ -20,8 +22,8 @@ def get_media() -> list[Media]:
         medias = session.query(Media).filter(Media.is_active == True).all()
         return medias
 
-    except SQLAlchemyError as error:
-        print(error) # TODO: log this
+    except SQLAlchemyError:
+        logger.exception("Error while getting media")
         return []
 
     finally:
@@ -46,8 +48,8 @@ def get_last_published_date(media: Media) -> datetime | None:
 
         return None
 
-    except SQLAlchemyError as error:
-        print(error)  # TODO: log this
+    except SQLAlchemyError:
+        logger.exception("Error while getting last published date of articles from %s", media.name)
         return None
 
     finally:
@@ -77,8 +79,10 @@ def post_article(article_tuples: List[ArticleInfo]) -> None:
         session.add_all(articles)
         session.commit()
 
-    except SQLAlchemyError as error:
-        print(error) #TODO: log this
+        logger.info("Inserted %s articles to db", len(articles))
+
+    except SQLAlchemyError:
+        logger.exception("Error while inserting articles")
         session.rollback()
 
     finally:

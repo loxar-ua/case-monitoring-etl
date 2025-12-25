@@ -5,11 +5,12 @@ from bs4 import BeautifulSoup
 from src.scrapper.scrappers.all_scrappers import BihusScrapper
 from src.database.models.media import Media
 from src.database.models.article import Article
+from tests.base_test import BaseTestCase
 from tests.helpers import create_mock_response, URL_TO_FIXTURE_MAP, FIXTURE_PATH
 
 TEST_URL = "https://bihus.info/rosijski-vijskovi-na-sumshhyni-zahopyly-zhytlovyj-budynok-a-potim-rozstrilyaly-jogo-iz-kulemeta/"
 
-class TestBaseScrapper(unittest.TestCase):
+class TestBaseScrapper(BaseTestCase):
     def setUp(self):
         media_orm = Media(
             name="Bihus.Info",

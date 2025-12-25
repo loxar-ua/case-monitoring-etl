@@ -1,11 +1,12 @@
 import unittest
 from datetime import datetime, timezone, timedelta
 from src.scrapper.scrappers.all_scrappers import HromadskeScrapper
+from tests.base_test import BaseTestCase
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://hromadske.ua/svit/255883-v-universyteti-ssha-ziavytsia-tsilyy-kurs-pro-muzychnu-karyeru-k-pop-artysta"
 
-class TestChesnoScrapper(CommonScrapperTestCase, unittest.TestCase,):
+class TestChesnoScrapper(CommonScrapperTestCase, BaseTestCase):
     scrapper_class = HromadskeScrapper
 
     media_data = {

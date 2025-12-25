@@ -2,12 +2,13 @@ import unittest
 from unittest.mock import patch, MagicMock
 import requests
 
+from tests.base_test import BaseTestCase
 from tests.helpers import create_mock_response
 from src.database.get_response import get_response, HEADERS, TIMEOUT
 
 TEST_URL = "https://example.com"
 
-class TestGetResponseCase(unittest.TestCase):
+class TestGetResponseCase(BaseTestCase):
 
     @patch('src.database.get_response.requests.get')
     @patch('src.database.get_response.random.uniform')

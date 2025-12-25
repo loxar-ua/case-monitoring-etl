@@ -3,12 +3,12 @@ from unittest.mock import patch
 from datetime import datetime, timezone, timedelta
 
 from src.database.service import get_media, post_article, get_last_published_date
-from tests.base_test_db import TestBaseCase
+from tests.base_test_db import BDTestCase
 from src.database.models.media import Media
 from src.database.models.article import Article
 from src.scrapper.scrappers import ArticleInfo
 
-class TestServiceCase(TestBaseCase):
+class BDTestServiceCase(BDTestCase):
 
     @patch("src.database.service.get_session")
     def test_get_media(self, mock_get_session):

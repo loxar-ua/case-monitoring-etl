@@ -2,6 +2,8 @@ from datetime import datetime, timezone, timedelta
 
 from bs4 import BeautifulSoup
 
+from src.logger import logger
+
 UA_MONTHS = {
     "січня": 1, "лютого": 2, "березня": 3, "квітня": 4, "травня": 5, "червня": 6,
     "липня": 7, "серпня": 8, "вересня": 9, "жовтня": 10, "листопада": 11, "грудня": 12
@@ -39,7 +41,7 @@ def parse_chesno_date(element: BeautifulSoup) -> datetime:
         dt = datetime(year, month, day, hour, minute)
 
         return dt.replace(tzinfo=timezone(timedelta(hours=2)))
-    except (KeyError, ValueError, IndexError) as e:
-        print(f"Date parsing error for '{date_str}': {e}") #TODO: log this
+    except (KeyError, ValueError, IndexError):
+        logger.exception("Date parsing error for '%s'", date_str)
         return None
 

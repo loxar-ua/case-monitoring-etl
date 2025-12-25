@@ -1,11 +1,12 @@
 import unittest
 from datetime import datetime, timezone, timedelta
 from src.scrapper.scrappers.all_scrappers import BabelScrapper
+from tests.base_test import BaseTestCase
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://babel.ua/news/122971-turechchina-pidtverdila-zagibel-20-viyskovih-pid-chas-avariji-litaka-c-130"
 
-class TestBabelScrapper(CommonScrapperTestCase, unittest.TestCase,):
+class TestBabelScrapper(CommonScrapperTestCase, BaseTestCase):
     scrapper_class = BabelScrapper
 
     media_data = {

@@ -2,8 +2,9 @@ from bs4 import BeautifulSoup
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from src.scrapper.scrappers import ArticleInfo
 
+from src.logger import logger
+from src.scrapper.scrappers import ArticleInfo
 from src.database.models.media import Media
 from src.database.get_response import get_response
 
@@ -64,7 +65,7 @@ class BaseScrapper(ABC):
             extracted[key] = self._get_element(soup, cfg)
 
         content = extracted.get("content")
-        print(content)
+
         published_at = extracted.get("published_at")
         if not content or not published_at:
             return None
@@ -77,5 +78,7 @@ class BaseScrapper(ABC):
             extracted["content"],
             self.media_orm.id
         )
+
+        # logger.info("Parsed article: title: %s, published date: %s", article_data.title, article_data.published_at)
 
         return article_data
