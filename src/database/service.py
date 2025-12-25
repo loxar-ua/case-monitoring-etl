@@ -65,20 +65,21 @@ def post_article(article_tuples: List[ArticleInfo]) -> None:
         logger.info("No article where given to insert")
         return
 
-    articles = []
+    unique_by_link: dict[str, ArticleInfo] = {}
     for article_tuple in article_tuples:
-        article = Article(
-            link = article_tuple.link,
-            title = article_tuple.title,
-            featured_image_url= article_tuple.featured_image_url,
-            author = article_tuple.author,
-            published_at = article_tuple.published_at,
-            content = article_tuple.content,
-            media_id = article_tuple.media_id,
-        )
-        articles.append(article)
-    session = get_session()
+        unique_by_link[article_tuple.link] = article_tuple
 
+    articles = [Article(
+        link = article_tuple.link,
+        title = article_tuple.title,
+        featured_image_url= article_tuple.featured_image_url,
+        author = article_tuple.author,
+        published_at = article_tuple.published_at,
+        content = article_tuple.content,
+        media_id = article_tuple.media_id,
+    ) for article_tuple in unique_by_link.values()]
+
+    session = get_session()
 
     try:
         session.add_all(articles)
