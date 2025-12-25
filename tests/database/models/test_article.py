@@ -4,9 +4,9 @@ from datetime import datetime
 from src.database.models.article import Article
 from src.database.models.media import Media
 from src.database.models.cluster import Cluster
-from tests.base_test_db import TestBaseCase
+from tests.base_test_db import BDTestCase
 
-class TestArticleCase(TestBaseCase):
+class BDTestArticleCase(BDTestCase):
 
     def test_article_creation(self):
         """Check that the article record is created correctly."""

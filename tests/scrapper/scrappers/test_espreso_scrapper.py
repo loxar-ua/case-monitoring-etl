@@ -2,11 +2,13 @@
 import unittest
 from datetime import datetime, timezone, timedelta
 from src.scrapper.scrappers.all_scrappers import EspresoScrapper
+from tests.base_test import BaseTestCase
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_2 = "https://espreso.tv/news-proekt-khochu-zhit-opublikuvav-spisok-politvyazniv-zvilnenikh-z-bilorusi"
 TEST_URL_1="https://espreso.tv/news-bilorus-pogodilas-pripiniti-zapuskati-povitryani-kuli-na-litvu"
-class TestEspresoScrapper(CommonScrapperTestCase, unittest.TestCase,):
+
+class TestEspresoScrapper(CommonScrapperTestCase,  BaseTestCase):
     scrapper_class = EspresoScrapper
 
     media_data = {

@@ -40,7 +40,7 @@ def get_response(url: str) -> requests.Response | None:
             response = None
 
 
-    except requests.exceptions:
+    except requests.RequestException:
         logger.exception(f"Error while requesting for this {url=}")
 
     return response

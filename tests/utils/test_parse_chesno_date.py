@@ -4,13 +4,15 @@ from datetime import datetime, timezone, timedelta
 from bs4 import BeautifulSoup
 
 from src.utils.parse_chesno_date import parse_chesno_date
+from tests.base_test import BaseTestCase
+
 
 def beautifier(date: str) -> BeautifulSoup:
     tagged_date = f"""<div class="date">{date}</div>"""
     return BeautifulSoup(tagged_date, "html.parser")
 
 
-class TestParseChesnoDate(unittest.TestCase):
+class TestParseChesnoDate(BaseTestCase):
 
     def test_parse_returns_right_date_with_year(self):
         """This test checks whether test_parse_chesno_date return correct dates for

@@ -1,11 +1,12 @@
 import unittest
 from datetime import datetime, timezone, timedelta
 from src.scrapper.scrappers.all_scrappers import TextyScrapper
+from tests.base_test import BaseTestCase
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://texty.org.ua/articles/116355/korupcijni-nebesa-hrushevskoho-9a-istoriya-skandalnoho-budivnyctva-j-meshkanciv/"
 
-class TestTextyScrapper(CommonScrapperTestCase, unittest.TestCase,):
+class TestTextyScrapper(CommonScrapperTestCase, BaseTestCase):
     scrapper_class = TextyScrapper
 
     media_data = {

@@ -6,7 +6,9 @@ from pathlib import Path
 now = datetime.now()
 
 this_file_path = Path(__file__)
-repo_path = this_file_path.parent.parent
+
+# __init__ -> logger -> src -> case-monintor-etl
+repo_path = this_file_path.parent.parent.parent
 
 # Folder for logs: log/YYYY/MM
 log_path = repo_path / 'log' / str(now.year) / f"{now.month:02d}"
@@ -26,7 +28,6 @@ file_handler = TimedRotatingFileHandler(
     log_file,
     when='d',
     interval=1,
-    mode='a',
     encoding='utf-8'
 )
 

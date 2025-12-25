@@ -3,9 +3,9 @@ from datetime import datetime
 
 from src.database.models.article import Article
 from src.database.models.media import Media
-from tests.base_test_db import TestBaseCase
+from tests.base_test_db import BDTestCase
 
-class TestArticleCase(TestBaseCase):
+class BDTestArticleCase(BDTestCase):
     def test_media_creation(self):
         """Check that the media record is created correctly."""
         media = Media(
