@@ -1,3 +1,4 @@
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func
 
@@ -65,11 +66,7 @@ def post_article(article_tuples: List[ArticleInfo]) -> None:
         logger.info("No article where given to insert")
         return
 
-    unique_by_link: dict[str, ArticleInfo] = {}
-    for article_tuple in article_tuples:
-        unique_by_link[article_tuple.link] = article_tuple
-
-    articles = [Article(
+    values = [Article(
         link = article_tuple.link,
         title = article_tuple.title,
         featured_image_url= article_tuple.featured_image_url,
@@ -77,15 +74,23 @@ def post_article(article_tuples: List[ArticleInfo]) -> None:
         published_at = article_tuple.published_at,
         content = article_tuple.content,
         media_id = article_tuple.media_id,
-    ) for article_tuple in unique_by_link.values()]
+    ) for article_tuple in article_tuples]
 
+    stmt = (
+        insert(Article)
+        .values(values)
+        .on_conflict_do_nothing(index_elements=["link"])
+    )
     session = get_session()
 
     try:
-        session.add_all(articles)
+        result = session.execute(stmt)
         session.commit()
 
-        logger.info("Inserted %s articles to db", len(articles))
+        logger.info(
+            "Inserted %s articles (duplicates skipped)",
+            result.rowcount
+        )
 
     except SQLAlchemyError:
         logger.exception("Error while inserting articles")
