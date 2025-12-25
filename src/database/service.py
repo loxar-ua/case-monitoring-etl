@@ -8,6 +8,8 @@ from .session import get_session
 from .models.media import Media
 from .models.article import Article
 from src.scrapper.scrappers.base_scrapper import ArticleInfo
+from ..logger import logger
+
 
 def get_media() -> list[Media]:
     """Gets all media sites marked as 'is_active'.
@@ -76,6 +78,8 @@ def post_article(article_tuples: List[ArticleInfo]) -> None:
     try:
         session.add_all(articles)
         session.commit()
+
+        logger.info(f"Inserted {len(articles)} articles to db")
 
     except SQLAlchemyError as error:
         print(error) #TODO: log this

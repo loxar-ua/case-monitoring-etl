@@ -3,6 +3,7 @@ from math import ceil
 
 import src.database.service as db_service
 from src.scrapper import ScrapperDateConfig, SCRAPPER_MAP
+from src.logger import logger
 
 def run_scrappers(operational_mode: bool,
                   scrapper_date_config: dict[str, ScrapperDateConfig] = None,
@@ -12,9 +13,16 @@ def run_scrappers(operational_mode: bool,
     scrapping to this date. Then takes all this links and parses
     important elements. And then inserts them to database."""
 
+    logger.info(
+        (f"Starting scrapping.",
+         f"operational_mode = {operational_mode}",
+         f"batch_size = {batch_size}")
+    )
+
     medias = db_service.get_media()
 
     for media in medias:
+
         Scrapper_Class = SCRAPPER_MAP[media.name]
         scrapper = Scrapper_Class(media)
 
@@ -31,6 +39,11 @@ def run_scrappers(operational_mode: bool,
         else: # Baseload mode, but without date config means no articles will be parsed
             return # TODO: log this
 
+        logger.info(
+            (f"Starting scrapping {media.name}. ",
+             f"start date = {START_DATE}, ",
+             f"end date = {END_DATE}",)
+        )
         links = scrapper.get_links(start_date=START_DATE, end_date=END_DATE)
         if not links: continue
 
