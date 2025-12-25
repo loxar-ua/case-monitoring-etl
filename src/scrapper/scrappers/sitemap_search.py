@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from io import BytesIO
 import gzip
+from gzip import BadGzipFile
 
 from datetime import datetime, timezone
 import re
@@ -35,9 +36,9 @@ def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, 
         if not sub_sitemap_response:
             continue
 
-        if sub_sitemap_url.endswith(".gz"):
+        try:
             xml_content = gzip.GzipFile(fileobj=BytesIO(sub_sitemap_response.content)).read()
-        else:
+        except BadGzipFile:
             xml_content = sub_sitemap_response.content
 
         sub_sitemap_soup = BeautifulSoup(xml_content, "lxml-xml")
