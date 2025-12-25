@@ -42,6 +42,6 @@ def parse_chesno_date(element: BeautifulSoup) -> datetime:
 
         return dt.replace(tzinfo=timezone(timedelta(hours=2)))
     except (KeyError, ValueError, IndexError):
-        logger.exception(f"Date parsing error for '{date_str}'")
+        logger.exception("Date parsing error for '%s'", date_str)
         return None
 

@@ -14,9 +14,8 @@ def run_scrappers(operational_mode: bool,
     important elements. And then inserts them to database."""
 
     logger.info(
-        (f"Starting scrapping.",
-         f"operational_mode = {operational_mode}",
-         f"batch_size = {batch_size}")
+        "Starting scrapping. operational_mode = %s, batch_size = %s",
+        operational_mode, batch_size
     )
 
     medias = db_service.get_media()
@@ -33,15 +32,14 @@ def run_scrappers(operational_mode: bool,
             END_DATE = datetime.now(tz=timezone.utc)
         else: # Base load mode
             if not media.name in scrapper_date_config:
-                logger.error(f"Media isn't configer in scrapper_date_config")
+                logger.error("Media isn't configer in scrapper_date_config")
                 continue
             START_DATE = scrapper_date_config[media.name].start_date
             END_DATE = scrapper_date_config[media.name].end_date
 
         logger.info(
-            (f"Starting scrapping {media.name}. ",
-             f"start date = {START_DATE}, ",
-             f"end date = {END_DATE}",)
+            "Starting scrapping %s. start date = %s, end date = %s",
+            media.name, START_DATE, END_DATE
         )
         links = scrapper.get_links(start_date=START_DATE, end_date=END_DATE)
         if not links: continue

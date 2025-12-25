@@ -4,7 +4,6 @@ from sqlalchemy import func
 from datetime import datetime, timedelta
 from typing import List
 
-from .models import media
 from .session import get_session
 from .models.media import Media
 from .models.article import Article
@@ -24,7 +23,7 @@ def get_media() -> list[Media]:
         return medias
 
     except SQLAlchemyError:
-        logger.exception(f"Error while getting media")
+        logger.exception("Error while getting media")
         return []
 
     finally:
@@ -50,7 +49,7 @@ def get_last_published_date(media: Media) -> datetime | None:
         return None
 
     except SQLAlchemyError:
-        logger.exception(f"Error while getting last published date of articles from {media.name}")
+        logger.exception("Error while getting last published date of articles from %s", media.name)
         return None
 
     finally:
@@ -80,7 +79,7 @@ def post_article(article_tuples: List[ArticleInfo]) -> None:
         session.add_all(articles)
         session.commit()
 
-        logger.info(f"Inserted {len(articles)} articles to db")
+        logger.info("Inserted %s articles to db", len(articles))
 
     except SQLAlchemyError:
         logger.exception("Error while inserting articles")
