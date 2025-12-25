@@ -20,6 +20,8 @@ def run_scrappers(operational_mode: bool,
 
         if operational_mode: # Operational mode
             START_DATE = db_service.get_last_published_date(media)
+            if not START_DATE:
+                START_DATE = datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
             END_DATE = datetime.now(tz=timezone.utc)
         elif scrapper_date_config: # Base load mode
             if not media.name in scrapper_date_config:
