@@ -61,6 +61,10 @@ def post_article(article_tuples: List[ArticleInfo]) -> None:
     Takes custom tuple with parsed elements of article and inserts
     data to database"""
 
+    if len(article_tuples) == 0:
+        logger.info("No article where given to insert")
+        return
+
     articles = []
     for article_tuple in article_tuples:
         article = Article(
@@ -74,6 +78,7 @@ def post_article(article_tuples: List[ArticleInfo]) -> None:
         )
         articles.append(article)
     session = get_session()
+
 
     try:
         session.add_all(articles)

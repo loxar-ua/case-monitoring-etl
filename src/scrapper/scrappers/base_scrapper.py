@@ -79,6 +79,7 @@ class BaseScrapper(ABC):
             self.media_orm.id
         )
 
-        # logger.info("Parsed article: title: %s, published date: %s", article_data.title, article_data.published_at)
+        logger.info("Parsed article: media: %s, title: %s, published date: %s",
+                    article_data.title, self.media_orm.name, article_data.published_at)
 
         return article_data

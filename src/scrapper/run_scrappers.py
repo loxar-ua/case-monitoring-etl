@@ -43,6 +43,7 @@ def run_scrappers(operational_mode: bool,
         )
         links = scrapper.get_links(start_date=START_DATE, end_date=END_DATE)
         if not links: continue
+        logger.info("Were found %s articles in this time period from this media", len(links))
 
         links_size = len(links)
         chunk_number = ceil(links_size / batch_size)
