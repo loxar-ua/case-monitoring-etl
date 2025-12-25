@@ -12,7 +12,8 @@ from src.database.session import get_connection, get_session
         "DATABASE_USER": "test_user",
         "DATABASE_PASSWORD": "test_password",
         "DATABASE_HOST": "test_host",
-        "DATABASE_PORT": "5432",})
+        "DATABASE_PORT": "5432",
+        "DATABASE_SSLMODE": "require"})
 class TestSessionCase(unittest.TestCase):
 
     def test_get_connection_returns_connection(self):
