@@ -15,8 +15,8 @@ class TestSlovoScrapper(CommonScrapperTestCase, unittest.TestCase,):
     }
 
     get_links_data = {
-        "start_date": datetime(2025, 11, 25, 12, 25, 19,  tzinfo=timezone(timedelta(hours=2))),
-        "end_date": datetime(2025, 11, 25, 12, 25, 57,   tzinfo=timezone(timedelta(hours=2))),
+        "start_date": datetime(2025, 11, 25, 12, 25, 19,  tzinfo=timezone.utc),
+        "end_date": datetime(2025, 11, 25, 12, 25, 57,   tzinfo=timezone.utc),
         "expected_links": [TEST_URL_1, TEST_URL_2]
     }
 

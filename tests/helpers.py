@@ -106,7 +106,15 @@ URL_TO_FIXTURE_MAP = {
         "https://suspilne.media/suspilne/sitemap/post-sitemap0.xml":
         "suspilne/news0.xml",
         "https://suspilne.media/1164200-kudrickij-pro-korupcijnu-spravu-v-energetici-ta-comu-vin-bi-ne-hotiv-ocoliti-minenergo/":
-        "suspilne/article.html"
+        "suspilne/article.html",
+
+        "https://www.slovoidilo.ua/sitemap_index_uk.xml":"slovo_i_dilo/sitemap_index_uk.xml",
+        "https://www.slovoidilo.ua/sitemap/monthly_2025-11_uk.xml":"slovo_i_dilo/monthly_2025-11_uk.xml",
+
+        "https://www.slovoidilo.ua/2025/11/25/novyna/polityka/komandi-trampa-rozpochalasya-pryxovana-borotba-cherez-myrnyj-plan-shhodo-ukrayiny-zmi":
+        "slovo_i_dilo/https_www_slovoidilo_ua_2025_11_25_novyna_polityka_komandi-trampa-rozpochalasya-pryxovanarotba-cherez-myrnyj-plan-shhodo-ukrayiny-zmi.html",
+        "https://www.slovoidilo.ua/2025/11/25/novyna/polityka/sud-zalyshyv-vartoyu-fihurantku-spravy-midas-ustymenko":
+        "slovo_i_dilo/https_www_slovoidilo_ua_2025_11_25_novyna_polityka_sud-zalyshyv-vartoyu-fihurantku-spravy-midas-ustymenko.html",
 
     }
 
