@@ -63,7 +63,6 @@ NashiGroshiScrapper = create_scrapper_class(
     sitemap_pattern=r"https://nashigroshi\.org/sitemap-pt-post-(202[5-9]|20[3-9]\d)-\d{2}\.xml"
 )
 #texty
-
 TextyScrapper = create_scrapper_class(
     name="TextyScrapper",
     elements_cfg= TEXTY_CFG,
@@ -77,16 +76,14 @@ TyzhdenScrapper = create_scrapper_class(
     sitemap_pattern=r"https://tyzhden.ua/wp-sitemap-posts-post-(12[4-9]|1[3-9]\d+|[2-9]\d+)\.xml",
 )
 #Espreso
-
 EspresoScrapper = create_scrapper_class(
     name="EspresoScrapper",
-    elements_cfg= ESPRESDO_CFG,
+    elements_cfg= ESPRESO_CFG,
     sitemap_pattern=r"https://espreso.tv/sitemap_news_1.xml",
 
 )
 
 #Radio Svoboda
-
 RadioSvobodaScrapper = create_scrapper_class(
     name="RadioSvobodaScrapper",
     elements_cfg= SVOBODA_CFG,

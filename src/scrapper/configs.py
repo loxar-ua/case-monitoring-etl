@@ -71,43 +71,7 @@ SVOBODA_CFG={
     },
 }
 
-ZN_CFG = {
-    "title": {
-        "tag_name": "meta",
-        "tag_attrs": {"property": "og:title"},
-        "formatter": str,
-        "use_content_attr": True,
-    },
-    "author": {
-    "tag_name": "div",
-    "tag_attrs": {"class": "article-author__box"},
-    "formatter": lambda tag: (
-        tag.find("a", class_="article-author__name").get_text(strip=True)
-        if tag and tag.find("a", class_="article-author__name")
-        else None
-    ),
-},
-    "featured_image_url": {
-        "tag_name": "meta",
-        "tag_attrs": {"property": "og:image"},
-        "formatter": str
-    },
-    "published_at": {
-    "tag_name": "div",
-    "tag_attrs": {"class": "content-date"},
-    "formatter": lambda tag: (
-        datetime.strptime(tag.get_text(strip=True), "%d %B, %Y, %H:%M")
-        if tag and tag.get_text(strip=True)
-        else None
-    ),
-    },
-    "content": {
-    "tag_name": "article",
-    "formatter": normalize_text
-},
-}
-
-ESPRESDO_CFG={
+ESPRESO_CFG={
     "title": {
             "tag_name": "meta",
             "tag_attrs": {"property": "og:title"},
