@@ -32,7 +32,7 @@ def run_scrappers(operational_mode: bool,
             END_DATE = datetime.now(tz=timezone.utc)
         else: # Base load mode
             if not media.name in scrapper_date_config:
-                logger.error("Media isn't configer in scrapper_date_config")
+                logger.error("Media isn't configured in scrapper_date_config")
                 continue
             START_DATE = scrapper_date_config[media.name].start_date
             END_DATE = scrapper_date_config[media.name].end_date
@@ -61,3 +61,7 @@ def run_scrappers(operational_mode: bool,
                 article_infos.append(article_info)
 
             db_service.post_article(article_infos)
+
+        logger.info(
+            "End of scrapping"
+        )

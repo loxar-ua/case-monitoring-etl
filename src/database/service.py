@@ -1,13 +1,12 @@
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func
 
 from datetime import datetime, timedelta
-from typing import List
 
 from .session import get_session
 from .models.media import Media
 from .models.article import Article
-from src.scrapper.scrappers.base_scrapper import ArticleInfo
 from ..logger import logger
 
 
@@ -56,32 +55,26 @@ def get_last_published_date(media: Media) -> datetime | None:
         session.close()
 
 
-def post_article(article_tuples: List[ArticleInfo]) -> None:
+def post_article(article_dicts: list[dict]) -> None:
     """Saves a single article to the database.
     Takes custom tuple with parsed elements of article and inserts
     data to database"""
 
-    if len(article_tuples) == 0:
-        logger.info("No article where given to insert")
+    if len(article_dicts) == 0:
+        logger.error("No article where given to insert")
         return
 
-    articles = [Article(
-        link = article_tuple.link,
-        title = article_tuple.title,
-        featured_image_url= article_tuple.featured_image_url,
-        author = article_tuple.author,
-        published_at = article_tuple.published_at,
-        content = article_tuple.content,
-        media_id = article_tuple.media_id,
-    ) for article_tuple in article_tuples]
-
     session = get_session()
-
     try:
-        session.add_all(articles)
+        stmt = (
+            insert(Article)
+            .values(article_dicts)
+            .on_conflict_do_nothing(index_elements=['link'])  # Use 'link' if that's your unique key
+        )
+        result = session.execute(stmt)
         session.commit()
 
-        logger.info("Inserted %s articles to db", len(articles))
+        logger.info("Inserted %s articles to db", len(result.rowcount))
 
     except SQLAlchemyError:
         logger.exception("Error while inserting articles")
