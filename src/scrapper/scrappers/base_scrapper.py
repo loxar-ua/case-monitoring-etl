@@ -2,11 +2,10 @@ from bs4 import BeautifulSoup
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from src.scrapper.scrappers import ArticleInfo
 
+from src.logger import logger
 from src.database.models.media import Media
 from src.database.get_response import get_response
-
 
 class BaseScrapper(ABC):
     def __init__(self, media_orm: Media, **kwargs):
@@ -38,7 +37,7 @@ class BaseScrapper(ABC):
         value = element['content'] if element.has_attr("content") else element
         return cfg["formatter"](value)
 
-    def _get_article_soup(self, link: str) -> BeautifulSoup:
+    def _get_article_soup(self, link: str) -> BeautifulSoup | None:
         """Takes link of article and returns the content of articles as BeautifulSoup object."""
 
         article_response = get_response(link)
@@ -50,7 +49,7 @@ class BaseScrapper(ABC):
         return article_soup
 
 
-    def parse_article(self, link: str) -> ArticleInfo | None:
+    def parse_article(self, link: str) -> dict | None:
         """Collects all elements of article using functions above
         and returns a dictionary of the data. Returns None if parsing fails."""
 
@@ -64,18 +63,22 @@ class BaseScrapper(ABC):
             extracted[key] = self._get_element(soup, cfg)
 
         content = extracted.get("content")
-        print(content)
+
         published_at = extracted.get("published_at")
         if not content or not published_at:
             return None
-        article_data = ArticleInfo(
-            link,
-            extracted["title"],
-            extracted["featured_image_url"],
-            extracted["author"],
-            extracted["published_at"],
-            extracted["content"],
-            self.media_orm.id
-        )
+
+        article_data = {
+            'link': link,
+            'title': extracted["title"],
+            'featured_image_url': extracted["featured_image_url"],
+            'author': extracted["author"],
+            'published_at': extracted["published_at"],
+            'content': extracted["content"],
+            'media_id': self.media_orm.id
+        }
+
+        logger.info("Parsed article: media: %s, title: %s, published date: %s",
+                    self.media_orm.name, article_data['title'], article_data['published_at'])
 
         return article_data

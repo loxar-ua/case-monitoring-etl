@@ -31,8 +31,6 @@ def get_connection(url: str = None) -> Engine:
 
     return get_engine(url)
 
-
-
 def get_session(url: str = None) -> Session:
     """Returns a new session from the existing engine pool"""
     engine = get_connection(url)

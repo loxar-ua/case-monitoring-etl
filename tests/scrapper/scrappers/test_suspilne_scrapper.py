@@ -1,12 +1,13 @@
 import unittest
 from datetime import datetime, timezone, timedelta
 from src.scrapper.scrappers.all_scrappers import SuspilneScrapper
+from tests.base_test import BaseTestCase
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://suspilne.media/1164184-ssa-skasuvali-sankcii-zaprovadzeni-proti-proektu-aes-v-ugorsini-aku-budue-rosijskij-rosatom/"
 TEST_URL_2 = "https://suspilne.media/1164200-kudrickij-pro-korupcijnu-spravu-v-energetici-ta-comu-vin-bi-ne-hotiv-ocoliti-minenergo/"
 
-class TestSuspilneScrapper(CommonScrapperTestCase, unittest.TestCase):
+class TestSuspilneScrapper(CommonScrapperTestCase, BaseTestCase):
     scrapper_class = SuspilneScrapper
 
     media_data = {

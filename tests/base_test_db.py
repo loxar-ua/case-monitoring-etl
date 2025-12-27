@@ -2,12 +2,11 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import text
 from testcontainers.postgres import PostgresContainer
 
-import unittest
-
 from src.database.models.base import Base
 from src.database.session import get_connection
+from tests.base_test import BaseTestCase
 
-class TestBaseCase(unittest.TestCase):
+class BDTestCase(BaseTestCase):
     postgres: PostgresContainer = None
     engine = None
     Session = None

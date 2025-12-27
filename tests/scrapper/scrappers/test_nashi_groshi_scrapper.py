@@ -1,13 +1,13 @@
 import unittest
 from src.scrapper.scrappers.all_scrappers import NashiGroshiScrapper
+from tests.base_test import BaseTestCase
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 from datetime import datetime, timezone
 
 TEST_URL_1 = "https://nashigroshi.org/2025/11/03/enerhoatom-za-19-mil-yoniv-zastrakhuvav-nahliadovu-radu-na-vypadok-areshtiv/"
 TEST_URL_2 = "https://nashigroshi.org/2025/11/03/politsiia-upershe-zamovyla-broneshchyty-velmet-z-likhtariamy-odrazu-na-53-mil-yony/"
 
-
-class TestNashiGroshiScrapper(CommonScrapperTestCase, unittest.TestCase,):
+class TestNashiGroshiScrapper(CommonScrapperTestCase, BaseTestCase):
     scrapper_class = NashiGroshiScrapper
 
     media_data = {

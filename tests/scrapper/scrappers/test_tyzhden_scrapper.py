@@ -1,12 +1,13 @@
 import unittest
 from src.scrapper.scrappers.all_scrappers import TyzhdenScrapper
+from tests.base_test import BaseTestCase
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 from datetime import datetime, timezone, timedelta
 
 TEST_URL_1="https://tyzhden.ua/svidchennia-1933-ho/"
 TEST_URL_2="https://tyzhden.ua/v-tyshi-lopotinnia-praporiv/"
 
-class TestTyzhdenScrapper(CommonScrapperTestCase, unittest.TestCase,):
+class TestTyzhdenScrapper(CommonScrapperTestCase, BaseTestCase):
     scrapper_class = TyzhdenScrapper
 
     media_data = {

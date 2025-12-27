@@ -3,12 +3,11 @@ from unittest.mock import patch
 from datetime import datetime, timezone, timedelta
 
 from src.database.service import get_media, post_article, get_last_published_date
-from tests.base_test_db import TestBaseCase
+from tests.base_test_db import BDTestCase
 from src.database.models.media import Media
 from src.database.models.article import Article
-from src.scrapper.scrappers import ArticleInfo
 
-class TestServiceCase(TestBaseCase):
+class BDTestServiceCase(BDTestCase):
 
     @patch("src.database.service.get_session")
     def test_get_media(self, mock_get_session):
@@ -48,15 +47,15 @@ class TestServiceCase(TestBaseCase):
 
             published_date = datetime.now(tz=timezone.utc)
             media_id = media.id
-            article = ArticleInfo(
-                "link",
-                "title",
-                "featured_image",
-                "author",
-                published_date,
-                "content",
-                media_id
-            )
+            article = {
+                "link": 'link',
+                "title": 'title',
+                "featured_image_url": 'featured_image',
+                "author": 'author',
+                'published_at': published_date,
+                'content': "content",
+                'media_id': media_id
+            }
 
             post_article([article])
 

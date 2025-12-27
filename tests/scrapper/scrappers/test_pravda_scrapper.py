@@ -1,12 +1,12 @@
 import unittest
 from datetime import datetime, timezone, timedelta
 from src.scrapper.scrappers.all_scrappers import PravdaScrapper
+from tests.base_test import BaseTestCase
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://www.pravda.com.ua/news/2025/12/01/8009697/"
 
-
-class TestPravdaScrapper(CommonScrapperTestCase, unittest.TestCase,):
+class TestPravdaScrapper(CommonScrapperTestCase, BaseTestCase):
     scrapper_class = PravdaScrapper
 
     media_data = {

@@ -1,11 +1,12 @@
 import unittest
 from datetime import datetime, timezone, timedelta
 from src.scrapper.scrappers.all_scrappers import ChesnoScrapper
+from tests.base_test import BaseTestCase
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://www.chesno.org/post/6645/"
 
-class TestChesnoScrapper(CommonScrapperTestCase, unittest.TestCase,):
+class TestChesnoScrapper(CommonScrapperTestCase, BaseTestCase):
     scrapper_class = ChesnoScrapper
 
     media_data = {

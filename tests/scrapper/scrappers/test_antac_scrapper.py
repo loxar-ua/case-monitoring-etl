@@ -1,12 +1,13 @@
 import unittest
 from datetime import datetime, timezone
 from src.scrapper.scrappers.all_scrappers import AntacScrapper
+from tests.base_test import BaseTestCase
 from tests.scrapper.scrappers.common_scrapper_test import CommonScrapperTestCase
 
 TEST_URL_1 = "https://antac.org.ua/en/news/how-avakov-venediktova-and-pechersk-court-rescue-the-agrobaron-bakhmatyuk-and-his-property/"
 TEST_URL_2 = "https://antac.org.ua/news/shans-dlia-realnoi-sudovoi-reformy-rada-pidtrymala-ochyshchennia-vyshchoi-rady-pravosuddia/"
 
-class TestAntacScrapper(CommonScrapperTestCase, unittest.TestCase,):
+class TestAntacScrapper(CommonScrapperTestCase, BaseTestCase):
     scrapper_class = AntacScrapper
 
     media_data = {

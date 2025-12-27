@@ -6,6 +6,8 @@ import unittest
 from unittest import mock
 
 from src.database.session import get_connection, get_session
+from tests.base_test import BaseTestCase
+
 
 @mock.patch.dict(os.environ, {
         "DATABASE_NAME": "test_db",
@@ -14,7 +16,7 @@ from src.database.session import get_connection, get_session
         "DATABASE_HOST": "test_host",
         "DATABASE_PORT": "5432",
         "DATABASE_SSLMODE": "require"})
-class TestSessionCase(unittest.TestCase):
+class TestSessionCase(BaseTestCase):
 
     def test_get_connection_returns_connection(self):
         """Checks that get_connection returns correct Engine with correct URL"""

@@ -103,7 +103,7 @@ SVOBODA_CFG={
     },
 }
 
-ESPRESDO_CFG={
+ESPRESO_CFG={
     "title": {
             "tag_name": "meta",
             "tag_attrs": {"property": "og:title"},

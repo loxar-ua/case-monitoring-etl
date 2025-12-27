@@ -75,9 +75,8 @@ class CommonScrapperTestCase(ABC):
 
         retrieved = self.scrapper.parse_article(data["link"])
 
-        self.assertIsInstance(retrieved, ArticleInfo)
-        self.assertEqual(retrieved.link, data["link"])
-        self.assertEqual(retrieved.title, data["title"])
-        self.assertEqual(retrieved.featured_image_url, data["featured_image_url"])
-        self.assertEqual(retrieved.author, data["author"])
-        self.assertEqual(retrieved.published_at, data["published_at"])
+        self.assertEqual(retrieved["link"], data["link"])
+        self.assertEqual(retrieved["title"], data["title"])
+        self.assertEqual(retrieved["featured_image_url"], data["featured_image_url"])
+        self.assertEqual(retrieved["author"], data["author"])
+        self.assertEqual(retrieved["published_at"], data["published_at"])

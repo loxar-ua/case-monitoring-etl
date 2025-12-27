@@ -3,9 +3,10 @@ from src.scrapper import SCRAPPER_DATE_CONFIG
 
 def main():
 
-    run_scrappers(False, SCRAPPER_DATE_CONFIG)
-
-
+    run_scrappers(
+        operational_mode=False,
+        scrapper_date_config=SCRAPPER_DATE_CONFIG
+    )
 
 if __name__ == '__main__':
     main()
