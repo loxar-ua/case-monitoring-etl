@@ -35,7 +35,12 @@ class BaseScrapper(ABC):
             return cfg["formatter"](element)
 
         value = element['content'] if element.has_attr("content") else element
-        return cfg["formatter"](value)
+
+        try:
+            return cfg["formatter"](value)
+        except ValueError:
+            logger.exception("Problem with formatting element: %s", value)
+            return None
 
     def _get_article_soup(self, link: str) -> BeautifulSoup | None:
         """Takes link of article and returns the content of articles as BeautifulSoup object."""
