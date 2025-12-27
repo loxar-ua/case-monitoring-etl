@@ -97,3 +97,11 @@ SuspilneScrapper = create_scrapper_class(
     elements_cfg= SUSPILNE_CFG,
     sitemap_pattern=r"https://suspilne.media/suspilne/sitemap/post-sitemap\d+\.xml",
 )
+
+#SlovoIDilo
+
+SlovoScrapper = create_scrapper_class(
+    name="SlovoScrapper",
+    elements_cfg= SLOVO_CFG,
+    sitemap_pattern=r"https://www\.slovoidilo\.ua/sitemap/monthly_(202[5-9]|20[3-9]\d|\d{4})-\d{2}_uk\.xml",
+)

@@ -22,7 +22,6 @@ def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, 
 
     sub_sitemap_urls = [sitemap.find('loc').text
                         for sitemap in sitemap_index_soup.find_all("sitemap")]
-
     # Filter all unimportant sitemaps, that don't contain articles
     sub_sitemap_urls = list(filter(
         lambda x: re.fullmatch(sub_sitemaps_pattern, x),
