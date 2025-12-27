@@ -12,7 +12,7 @@ class Article(Base):
     __tablename__ = "article"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String, nullable=False)
-    link: Mapped[str] = mapped_column(String, nullable=False)
+    link: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     featured_image_url: Mapped[str] = mapped_column(String, nullable=True)
     author: Mapped[str] = mapped_column(String, nullable=True)
     content: Mapped[str] = mapped_column(String)

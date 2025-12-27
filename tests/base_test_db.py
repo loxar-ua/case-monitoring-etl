@@ -47,5 +47,6 @@ class BDTestCase(BaseTestCase):
 
     def tearDown(self):
         """Rollbacks transaction and closes session after work of each test"""
-        self.transaction.rollback()
+        if self.transaction.is_active:
+            self.transaction.rollback()
         self.session.close()
