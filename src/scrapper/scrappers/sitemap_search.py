@@ -8,6 +8,15 @@ import re
 
 from src.database.get_response import get_response
 from . import LinkInfo
+from ...logger import logger
+
+def parse_lastmod(text: str) -> datetime | None:
+    try:
+        return datetime.fromisoformat(text).replace(tzinfo=timezone.utc)
+    except (ValueError, TypeError):
+        logger.exception("Error while parsing lastmod: %s", text)
+        return None
+
 
 def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, end_date, ):
     """Using <lastmod> finds what subsitemaps to check.
@@ -35,6 +44,8 @@ def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, 
         if not sub_sitemap_response:
             continue
 
+        logger.info("Get sitemap: %s", sub_sitemap_url)
+
         try:
             xml_content = gzip.GzipFile(fileobj=BytesIO(sub_sitemap_response.content)).read()
         except BadGzipFile:
@@ -46,11 +57,16 @@ def get_links_from_sitemap(sitemap_index_url, sub_sitemaps_pattern, start_date, 
         if urlset_tag:
             for url_tag in urlset_tag.find_all(recursive=False):
                 combined_sub_sitemap.urlset.append(url_tag)
+
     article_urls = [
-        LinkInfo(url.find("loc").text.strip(),
-                 datetime.fromisoformat(url.find("lastmod").text).replace(tzinfo=timezone.utc))
+        LinkInfo(
+            url.find("loc").text.strip(),
+            lastmod
+        )
         for url in combined_sub_sitemap.urlset
-        if url.find("loc") is not None and url.find("lastmod") is not None
+        if url.find("loc") is not None
+           and url.find("lastmod") is not None
+           and (lastmod := parse_lastmod(url.find("lastmod").text)) is not None
     ]
     # Get articles that only fall within a specified time interval
     article_urls = list(filter(
