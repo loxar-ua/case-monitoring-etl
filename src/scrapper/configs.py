@@ -255,10 +255,10 @@ GROSHI_CFG = {
         "use_content_attr": True,
     },
     "author": {
-    "tag_name": "div",
-    "tag_attrs": {"class": "column-two-third single article"},
-    "formatter": lambda tag: tag.find_all("p")[-1].get_text(strip=True) if tag else None
-},
+        "tag_name": None,
+        "tag_attrs": None,
+        "formatter": str
+    },
     "featured_image_url": {
         "tag_name": "meta",
         "tag_attrs": {"name": "twitter:image"},
