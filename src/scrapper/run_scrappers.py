@@ -62,6 +62,4 @@ def run_scrappers(operational_mode: bool,
 
             db_service.post_article(article_infos)
 
-        logger.info(
-            "End of scrapping"
-        )
+    logger.info("End of scrapping")

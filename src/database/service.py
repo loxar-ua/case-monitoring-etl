@@ -74,7 +74,7 @@ def post_article(article_dicts: list[dict]) -> None:
         result = session.execute(stmt)
         session.commit()
 
-        logger.info("Inserted %s articles to db", len(result.rowcount))
+        logger.info("Inserted %s articles to db", result.rowcount)
 
     except SQLAlchemyError:
         logger.exception("Error while inserting articles")
