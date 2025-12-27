@@ -76,7 +76,7 @@ SlovoScrapper = create_scrapper_class(
 TyzhdenScrapper = create_scrapper_class(
     name="TyzhdenScrapper",
     elements_cfg= TYZHDEN_CFG,
-    sitemap_pattern=r"https://tyzhden.ua/wp-sitemap-posts-post-(12[4-9]|1[3-9]\d+|[2-9]\d+)\.xml",
+    sitemap_pattern=r"https://tyzhden.ua/wp-sitemap-posts-post-(12[4-9]|1[3-9]\d+|[2-9]\d{2,})\.xml",
 )
 
 # Рух Чесно

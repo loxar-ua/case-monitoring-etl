@@ -31,9 +31,6 @@ class BaseScrapper(ABC):
         if not element:
             return None
 
-        if tag_name == "lastmod":
-            return cfg["formatter"](element)
-
         value = element['content'] if element.has_attr("content") else element
 
         try:
