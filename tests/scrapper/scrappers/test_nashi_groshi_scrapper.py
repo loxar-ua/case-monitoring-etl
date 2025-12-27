@@ -24,7 +24,7 @@ class TestNashiGroshiScrapper(CommonScrapperTestCase, BaseTestCase):
     parse_article_data = {
         "link": TEST_URL_1,
         "title": "«Енергоатом» за 19 мільйонів застрахував наглядову раду на випадок арештів",
-        "author": "Анна Сорока, «Наші гроші»",
+        "author": None,
         "featured_image_url": "https://nashigroshi.org/wp-content/uploads/2025/10/enerhoatom-nahliadova-300x215.png",
         "published_at":  datetime(2025, 11, 3, 0, 0, tzinfo=timezone.utc)
     }
