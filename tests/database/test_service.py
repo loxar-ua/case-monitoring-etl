@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from datetime import datetime, timezone, timedelta
 
-from src.database.service import get_media, post_article, get_last_published_date
+from src.database.service import get_media, post_article, get_last_published_date, get_articles
 from tests.base_test_db import BDTestCase
 from src.database.models.media import Media
 from src.database.models.article import Article
@@ -163,6 +163,103 @@ class BDTestServiceCase(BDTestCase):
 
             self.assertEqual(retrieved_date_1, published_date_1 + timedelta(seconds=1))
             self.assertEqual(retrieved_date_2, published_date_2 + timedelta(seconds=1))
+
+    @patch("src.database.service.get_session")
+    def test_get_articles(self, mock_get_session):
+        """Tests whether get_articles() returns
+        all articles, in a normal non-filtering mode"""
+        mock_get_session.return_value = self.session
+
+        media = Media(name="test_media_1", sitemap_index_url="index.xml", is_active=True)
+        self.session.add(media)
+        self.session.flush()
+
+        published_date = datetime(2012, 12, 12, 12, 12, tzinfo=timezone.utc)
+
+        articles = [
+            Article(
+                link="link_1",
+                title="title",
+                media_id=media.id,
+                content="content",
+                published_at=published_date,
+            ),
+            Article(
+                link="link_2",
+                title="title",
+                media_id=media.id,
+                content="content",
+                published_at=published_date,
+            )
+        ]
+
+        self.session.add_all(articles)
+        self.session.flush()
+
+        with patch.object(self.session, 'close'):
+            retrieved = get_articles()
+
+        self.assertEqual(retrieved[0], articles[0])
+        self.assertEqual(retrieved[1], articles[1])
+
+    @patch("src.database.service.get_session")
+    def test_get_articles_filter_non_encodding(self, mock_get_session):
+        """Tests whether get_articles() returns
+        all articles, in a normal non-filtering mode"""
+        mock_get_session.return_value = self.session
+
+        media = Media(name="test_media_1", sitemap_index_url="index.xml", is_active=True)
+        self.session.add(media)
+        self.session.flush()
+
+        published_date = datetime(2012, 12, 12, 12, 12, tzinfo=timezone.utc)
+
+        articles = [
+            Article(
+                link="link_1",
+                title="title",
+                media_id=media.id,
+                content="content",
+                published_at=published_date,
+            ),
+            Article(
+                link="link_2",
+                title="title",
+                media_id=media.id,
+                dense_embedding = [1],
+                sparse_embedding = [0],
+                content="content",
+                published_at=published_date,
+            ),
+            Article(
+                link="link_3",
+                title="title",
+                media_id=media.id,
+                dense_embedding = [1],
+                content="content",
+                published_at=published_date,
+            ),
+            Article(
+                link="link_4",
+                title="title",
+                media_id=media.id,
+                sparse_embedding = [1],
+                content="content",
+                published_at=published_date,
+            )
+        ]
+
+        self.session.add_all(articles)
+        self.session.flush()
+
+        with patch.object(self.session, 'close'):
+            retrieved = get_articles(True)
+
+        # Second article should be absent.
+        self.assertEqual(retrieved[0], articles[0])
+        self.assertEqual(retrieved[1], articles[2])
+        self.assertEqual(retrieved[2], articles[3])
+
 
 if __name__ == "__main__":
     unittest.main()

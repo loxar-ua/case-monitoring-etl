@@ -1,9 +1,12 @@
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import func
+from sqlalchemy import func, or_
 
 from datetime import datetime, timedelta
 
+from sqlalchemy.orm import Query
+
+from src.database.models.article import Article
 from .session import get_session
 from .models.media import Media
 from .models.article import Article
@@ -82,3 +85,31 @@ def post_article(article_dicts: list[dict]) -> None:
 
     finally:
         session.close()
+
+def get_articles(filter_not_encoded: bool = False) -> list[Article] | None:
+    session = get_session()
+
+    articles = None
+
+    try:
+        if filter_not_encoded:
+            articles = (
+                session
+                .query(Article)
+                .filter(
+                    or_(
+                        Article.dense_embedding == None,
+                        Article.sparse_embedding == None
+                    )
+                ).all()
+            )
+        else:
+            articles = session.query(Article).all()
+
+    except SQLAlchemyError:
+        logger.exception("Error while inserting articles")
+
+    finally:
+        session.close()
+        return articles
+
