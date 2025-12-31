@@ -1,8 +1,13 @@
+import numpy as np
+
 import unittest
 from unittest.mock import patch
 from datetime import datetime, timezone, timedelta
 
+from scipy.sparse import csr_matrix
+
 from src.database.service import get_media, post_article, get_last_published_date, get_articles, update_articles
+from src.embedder import DENSE_DIM, VOCAB_SIZE
 from tests.base_test_db import BDTestCase
 from src.database.models.media import Media
 from src.database.models.article import Article
@@ -203,7 +208,7 @@ class BDTestServiceCase(BDTestCase):
         self.assertEqual(retrieved[1], articles[1])
 
     @patch("src.database.service.get_session")
-    def test_get_articles_filter_non_encodding(self, mock_get_session):
+    def test_get_articles_filter_non_encoding(self, mock_get_session):
         """Tests whether get_articles() returns
         all articles, in a normal non-filtering mode"""
         mock_get_session.return_value = self.session
@@ -212,6 +217,8 @@ class BDTestServiceCase(BDTestCase):
         self.session.add(media)
         self.session.flush()
 
+        dense = np.zeros(DENSE_DIM)
+        sparse = csr_matrix((1, VOCAB_SIZE))
         published_date = datetime(2012, 12, 12, 12, 12, tzinfo=timezone.utc)
 
         articles = [
@@ -226,8 +233,8 @@ class BDTestServiceCase(BDTestCase):
                 link="link_2",
                 title="title",
                 media_id=media.id,
-                dense_embedding = [1],
-                sparse_embedding = [0],
+                dense_embedding = dense,
+                sparse_embedding = sparse,
                 content="content",
                 published_at=published_date,
             ),
@@ -235,7 +242,7 @@ class BDTestServiceCase(BDTestCase):
                 link="link_3",
                 title="title",
                 media_id=media.id,
-                dense_embedding = [1],
+                dense_embedding = dense,
                 content="content",
                 published_at=published_date,
             ),
@@ -243,7 +250,7 @@ class BDTestServiceCase(BDTestCase):
                 link="link_4",
                 title="title",
                 media_id=media.id,
-                sparse_embedding = [1],
+                sparse_embedding = sparse,
                 content="content",
                 published_at=published_date,
             )
