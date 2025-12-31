@@ -112,3 +112,14 @@ def get_articles(filter_not_encoded: bool = False) -> list[Article]:
         return []
 
 
+def update_articles(articles: list[Article]):
+    """
+    Commits changes in articles. The main update of models is performed in outer functions.
+    :param articles:
+    """
+
+    try:
+        with get_session() as session:
+            session.commit()
+    except SQLAlchemyError:
+        logger.exception("Error while updating articles")
