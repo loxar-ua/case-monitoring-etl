@@ -105,6 +105,8 @@ def get_articles(filter_not_encoded: bool = False) -> list[Article]:
                         Article.sparse_embedding.is_(None)
                     )
                 )
+
+            logger.info("Fetched %s articles", query.count())
             return query.all()
 
     except SQLAlchemyError:
@@ -121,5 +123,7 @@ def update_articles(articles: list[Article]):
     try:
         with get_session() as session:
             session.commit()
+            logger.info("Updated %s articles", len(articles))
+
     except SQLAlchemyError:
         logger.exception("Error while updating articles")

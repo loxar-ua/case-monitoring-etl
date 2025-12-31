@@ -1,6 +1,6 @@
 from sqlalchemy import Integer, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from pgvector.sqlalchemy import Vector, SparseVector
+from pgvector.sqlalchemy import Vector, SPARSEVEC
 
 from datetime import datetime
 
@@ -19,8 +19,8 @@ class Article(Base):
     content: Mapped[str] = mapped_column(String)
     published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     dense_embedding: Mapped[list] = mapped_column(Vector(DENSE_DIM), default=None, nullable=True)
+    sparse_embedding: Mapped[list] = mapped_column(SPARSEVEC(VOCAB_SIZE), default=None, nullable=True)
     is_checked: Mapped[bool] = mapped_column(Boolean, default=False)
-    sparse_embedding: Mapped[list] = mapped_column(SparseVector(VOCAB_SIZE), default=None, nullable=True)
 
     cluster_id: Mapped[int] = mapped_column(ForeignKey("cluster.id"), nullable=True)
     cluster: Mapped["Cluster"] = relationship(back_populates="articles")

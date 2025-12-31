@@ -30,8 +30,8 @@ class TestEncoder(unittest.TestCase):
             self.assertIsInstance(lex, dict)
             self.assertGreater(len(lex), 0)
 
-
-
+if __name__ == '__main__':
+    unittest.main()
 
 
 

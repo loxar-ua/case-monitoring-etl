@@ -1,4 +1,5 @@
-from . import embedding_model
+from src.embedder import embedding_model
+from src.logger import logger
 
 def encode(texts: list[str]) -> dict:
     """
@@ -14,4 +15,5 @@ def encode(texts: list[str]) -> dict:
         return_sparse=True
     )
 
+    logger.info("Successfully created embeddings for %s articles", len(output))
     return output
