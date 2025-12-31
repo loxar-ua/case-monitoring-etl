@@ -4,18 +4,33 @@ from math import ceil
 import src.database.service as db_service
 from src.scrapper import ScrapperDateConfig, SCRAPPER_MAP
 from src.logger import logger
+from src.scrapper.scrappers.base_scrapper import BaseScrapper
+from src.utils.batcher import batcher
+
+
+@batcher(batch_size=100)
+def scrap_and_post(size: int, elements: list[str], scrapper: BaseScrapper) -> None:
+    article_infos = []
+    for link in elements:
+        article_info = scrapper.parse_article(link)
+
+        if not article_info:
+            continue
+        article_infos.append(article_info)
+
+    if article_infos:
+        db_service.post_article(article_infos)
 
 def run_scrappers(operational_mode: bool,
-                  scrapper_date_config: dict[str, ScrapperDateConfig] = None,
-                  batch_size: int = 100) -> None:
+                  scrapper_date_config: dict[str, ScrapperDateConfig] = None) -> None:
     """Initiates scrappers appropriate to media.
     Searches through sitemaps and scraps all links from time of last
     scrapping to this date. Then takes all this links and parses
     important elements. And then inserts them to database."""
 
     logger.info(
-        "Starting scrapping. operational_mode = %s, batch_size = %s",
-        operational_mode, batch_size
+        "Starting scrapping. operational_mode = %s",
+        operational_mode
     )
 
     medias = db_service.get_media()
@@ -46,20 +61,6 @@ def run_scrappers(operational_mode: bool,
         logger.info("Were found %s articles in this time period from this media", len(links))
 
         links_size = len(links)
-        chunk_number = ceil(links_size / batch_size)
-
-        for i in range(chunk_number):
-            chunk_start = i * batch_size
-            chunk_end = min((i + 1) * batch_size, links_size)
-
-            article_infos = []
-            for link in links[chunk_start:chunk_end]:
-                article_info = scrapper.parse_article(link)
-
-                if not article_info:
-                    continue
-                article_infos.append(article_info)
-
-            db_service.post_article(article_infos)
+        scrap_and_post(links_size, links, scrapper)
 
     logger.info("End of scrapping")

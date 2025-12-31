@@ -6,6 +6,8 @@ from src.database.models.article import Article
 from src.database.service import get_articles, update_articles
 from src.embedder import VOCAB_SIZE
 from src.embedder.encoder import encode
+from src.utils.batcher import batcher
+
 
 def get_text(article: Article) -> str:
     return article.title + ". " + article.content
@@ -18,6 +20,26 @@ def dict_to_csr(sparse_dict: dict) -> csr_matrix:
 
     return csr_matrix((data, (rows, cols)), shape=(1, VOCAB_SIZE), dtype=float)
 
+@batcher(1000)
+def encode_and_update(size: int, elements: list[Article]) -> None:
+
+    texts = list(map(get_text, elements))
+    output = encode(texts)
+
+    dense_embeddings = output["dense_vecs"]
+    sparse_embeddings = list(
+        map(lambda x: normalize(x, norm='l2'),
+            map(dict_to_csr, output["lexical_weights"])
+            )
+    )
+
+    for i in range(size):
+        article = elements[i]
+        article.dense_embedding = dense_embeddings[i]
+        article.sparse_embedding = sparse_embeddings[i]
+
+    update_articles(elements)
+
 
 def run_encoder():
     """
@@ -27,19 +49,6 @@ def run_encoder():
     """
 
     articles = get_articles(True)
-    texts = list(map(get_text, articles))
-    output = encode(texts)
+    size = len(articles)
 
-    dense_embeddings = output["dense_vecs"]
-    sparse_embeddings = list(
-        map(lambda x: normalize(x, norm='l2'),
-            map(dict_to_csr, output["lexical_weights"])
-        )
-    )
-
-    for i in range(len(articles)):
-        article = articles[i]
-        article.dense_embedding = dense_embeddings[i]
-        article.sparse_embedding = sparse_embeddings[i]
-
-    update_articles(articles)
+    encode_and_update(size, articles)
