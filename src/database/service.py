@@ -14,102 +14,101 @@ from ..logger import logger
 
 
 def get_media() -> list[Media]:
-    """Gets all media sites marked as 'is_active'.
+    """
+    Gets all media sites marked as 'is_active'.
     Used for taking sitemaps and associating articles
-    to their separate media"""
-
-    session = get_session()
+    to their separate media
+    :return:
+    """
 
     try:
-        medias = session.query(Media).filter(Media.is_active == True).order_by(Media.id).all()
-        return medias
+        with get_session() as session:
+            medias = session.query(Media).filter(Media.is_active == True).order_by(Media.id).all()
+            return medias
 
     except SQLAlchemyError:
         logger.exception("Error while getting media")
         return []
 
-    finally:
-        session.close()
-
 def get_last_published_date(media: Media) -> datetime | None:
-    """Finds last published date of article of media.
-    Used for finding from what point to start new scraping"""
-
-    session = get_session()
+    """
+    Returns the last published date of articles for the given media.
+    Returns None if no articles exist or an error occurs.
+    :param media:
+    :return: datetime of last published article from this media
+    """
 
     try:
-        last_published_date = (
-            session.query(func.max(Article.published_at))
-            .filter(Article.media_id == media.id)
-            .scalar()
-        )
+        with get_session() as session:
+            last_published_date = (
+                session.query(func.max(Article.published_at))
+                .filter(Article.media_id == media.id)
+                .scalar()
+            )
 
-        if last_published_date:
-            last_published_date = last_published_date + timedelta(seconds=1)
-            return last_published_date
+            if last_published_date:
+                last_published_date = last_published_date + timedelta(seconds=1)
+                return last_published_date
 
-        return None
+            return None
 
     except SQLAlchemyError:
-        logger.exception("Error while getting last published date of articles from %s", media.name)
+        logger.exception(
+            "Error while getting last published date of articles from %s", media.name
+        )
         return None
-
-    finally:
-        session.close()
 
 
 def post_article(article_dicts: list[dict]) -> None:
-    """Saves a single article to the database.
-    Takes custom tuple with parsed elements of article and inserts
-    data to database"""
+    """
+    Inserts multiple articles into the database.
+    Skips duplicates based on unique 'link' field.
+    :param article_dicts:
+    :return: None
+    """
 
     if len(article_dicts) == 0:
-        logger.error("No article where given to insert")
+        logger.warning("No articles to insert")
         return
 
-    session = get_session()
     try:
-        stmt = (
-            insert(Article)
-            .values(article_dicts)
-            .on_conflict_do_nothing(index_elements=['link'])  # Use 'link' if that's your unique key
-        )
-        result = session.execute(stmt)
-        session.commit()
-
-        logger.info("Inserted %s articles to db", result.rowcount)
-
-    except SQLAlchemyError:
-        logger.exception("Error while inserting articles")
-        session.rollback()
-
-    finally:
-        session.close()
-
-def get_articles(filter_not_encoded: bool = False) -> list[Article] | None:
-    session = get_session()
-
-    articles = None
-
-    try:
-        if filter_not_encoded:
-            articles = (
-                session
-                .query(Article)
-                .filter(
-                    or_(
-                        Article.dense_embedding == None,
-                        Article.sparse_embedding == None
-                    )
-                ).all()
+        with get_session() as session:
+            stmt = (
+                insert(Article)
+                .values(article_dicts)
+                .on_conflict_do_nothing(index_elements=['link'])  # Use 'link' if that's your unique key
             )
-        else:
-            articles = session.query(Article).all()
+            result = session.execute(stmt)
+            session.commit()
+
+            logger.info("Inserted %s articles to db", result.rowcount)
 
     except SQLAlchemyError:
         logger.exception("Error while inserting articles")
 
-    finally:
-        session.close()
-        return articles
+
+def get_articles(filter_not_encoded: bool = False) -> list[Article]:
+    """
+    Fetches all articles from db. If filter_not_encoded set to True
+    fetches only articles without dense and sparse encoddings.
+    :param filter_not_encoded: will this filter work
+    :return: list of articles
+    """
+
+    try:
+        with get_session() as session:
+            query = session.query(Article)
+            if filter_not_encoded:
+                query = query.filter(
+                    or_(
+                        Article.dense_embedding.is_(None),
+                        Article.sparse_embedding.is_(None)
+                    )
+                )
+            return query.all()
+
+    except SQLAlchemyError:
+        logger.exception("Error while fetching articles")
+        return []
+
 
