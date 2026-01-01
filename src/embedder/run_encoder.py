@@ -7,6 +7,7 @@ from src.database.service import get_articles, update_articles
 from src.embedder import VOCAB_SIZE
 from src.embedder.encoder import encode
 from src.utils.batcher import batcher
+from src.logger import logger
 
 
 def get_text(article: Article) -> str:
@@ -47,8 +48,10 @@ def run_encoder():
     Creates and normalizes embeddings for each article.
     Updates articles in db with new embeddings.
     """
-
+    logger.info("Starting encoder")
     articles = get_articles(True)
     size = len(articles)
 
     encode_and_update(size, articles)
+
+    logger.info("End of encoding")

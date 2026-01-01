@@ -13,9 +13,9 @@ def batcher(batch_size: int):
                 current_chunk = elements[chunk_start:chunk_end]
                 current_size = len(current_chunk)
 
-                logger.info("Processing batch of size %s", size)
+                logger.info("Processing batch of size %s", current_size)
                 func(current_size, current_chunk, *args, **kwargs)
-                logger.info("Finished processing batch of size %s", size)
+                logger.info("Finished processing batch of size %s", current_size)
 
         return wrapper
     return decorator
