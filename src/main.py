@@ -1,12 +1,10 @@
 from src.scrapper.run_scrappers import run_scrappers
 from src.scrapper import SCRAPPER_DATE_CONFIG
+from src.embedder.run_encoder import run_encoder
 
 def main():
 
-    run_scrappers(
-        operational_mode=False,
-        scrapper_date_config=SCRAPPER_DATE_CONFIG
-    )
+    run_encoder()
 
 if __name__ == '__main__':
     main()
