@@ -122,6 +122,8 @@ def update_articles(articles: list[Article]):
 
     try:
         with get_session() as session:
+            for article in articles:
+                session.merge(article)
             session.commit()
             logger.info("Updated %s articles", len(articles))
 

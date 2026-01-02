@@ -14,9 +14,6 @@ repo_path = this_file_path.parent.parent.parent
 log_path = repo_path / 'log' / str(now.year) / f"{now.month:02d}"
 log_path.mkdir(parents=True, exist_ok=True)
 
-logger = logging.getLogger(__name__)
-
-logger.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter(
     fmt='%(asctime)s - %(levelname)s - %(message)s',
@@ -30,6 +27,10 @@ file_handler = TimedRotatingFileHandler(
     interval=1,
     encoding='utf-8'
 )
-
 file_handler.setFormatter(formatter)
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 logger.addHandler(file_handler)
+
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
