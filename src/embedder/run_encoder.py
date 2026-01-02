@@ -21,7 +21,7 @@ def dict_to_csr(sparse_dict: dict) -> csr_matrix:
 
     return csr_matrix((data, (rows, cols)), shape=(1, VOCAB_SIZE), dtype=float)
 
-@batcher(1000)
+@batcher(2000)
 def encode_and_update(size: int, elements: list[Article]) -> None:
 
     texts = list(map(get_text, elements))
