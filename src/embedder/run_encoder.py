@@ -9,7 +9,6 @@ from src.embedder.encoder import encode
 from src.utils.batcher import batcher
 from src.logger import logger
 
-
 def get_text(article: Article) -> str:
     return article.title + ". " + article.content
 
@@ -21,7 +20,7 @@ def dict_to_csr(sparse_dict: dict) -> csr_matrix:
 
     return csr_matrix((data, (rows, cols)), shape=(1, VOCAB_SIZE), dtype=float)
 
-@batcher(2000)
+@batcher(10)
 def encode_and_update(size: int, elements: list[Article]) -> None:
 
     texts = list(map(get_text, elements))

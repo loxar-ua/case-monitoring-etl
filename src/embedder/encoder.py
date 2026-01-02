@@ -15,5 +15,5 @@ def encode(texts: list[str]) -> dict:
         return_sparse=True
     )
 
-    logger.info("Successfully created embeddings for %s articles", len(output))
+    logger.info("Successfully created embeddings for %s articles", len(texts))
     return output
