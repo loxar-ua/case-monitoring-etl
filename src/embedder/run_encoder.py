@@ -2,6 +2,7 @@ import numpy as np
 from scipy.sparse import csr_matrix
 from sklearn.preprocessing import normalize
 
+from src.database import ArticleFilter
 from src.database.models.article import Article
 from src.database.service import get_articles, update_articles
 from src.embedder import VOCAB_SIZE
@@ -48,7 +49,7 @@ def run_encoder():
     Updates articles in db with new embeddings.
     """
     logger.info("Starting encoder")
-    articles = get_articles(True)
+    articles = get_articles(ArticleFilter.NON_ENCODED)
     size = len(articles)
 
     encode_and_update(size, articles)
