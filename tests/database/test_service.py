@@ -6,6 +6,7 @@ from datetime import datetime, timezone, timedelta
 
 from scipy.sparse import csr_matrix
 
+from src.database import ArticleFilter
 from src.database.service import get_media, post_article, get_last_published_date, get_articles, update_articles
 from src.embedder import DENSE_DIM, VOCAB_SIZE
 from tests.base_test_db import BDTestCase
@@ -202,15 +203,16 @@ class BDTestServiceCase(BDTestCase):
         self.session.flush()
 
         with patch.object(self.session, 'close'):
-            retrieved = get_articles()
+            retrieved = get_articles(filter=ArticleFilter.ANY)
 
+        self.assertEqual(len(retrieved), 2)
         self.assertEqual(retrieved[0], articles[0])
         self.assertEqual(retrieved[1], articles[1])
 
     @patch("src.database.service.get_session")
     def test_get_articles_filter_non_encoding(self, mock_get_session):
         """Tests whether get_articles() returns
-        all articles, in a normal non-filtering mode"""
+        only non-encoded articles, in a non_encoded mode"""
         mock_get_session.return_value = self.session
 
         media = Media(name="test_media_1", sitemap_index_url="index.xml", is_active=True)
@@ -260,12 +262,73 @@ class BDTestServiceCase(BDTestCase):
         self.session.flush()
 
         with patch.object(self.session, 'close'):
-            retrieved = get_articles(True)
+            retrieved = get_articles(filter=ArticleFilter.NON_ENCODED)
 
         # Second article should be absent.
+        self.assertEqual(len(retrieved), 3)
         self.assertEqual(retrieved[0], articles[0])
         self.assertEqual(retrieved[1], articles[2])
         self.assertEqual(retrieved[2], articles[3])
+
+    @patch("src.database.service.get_session")
+    def test_get_articles_filter_encoding(self, mock_get_session):
+        """Tests whether get_articles() returns
+        only fully encoded articles, in an encoded mode"""
+        mock_get_session.return_value = self.session
+
+        media = Media(name="test_media_1", sitemap_index_url="index.xml", is_active=True)
+        self.session.add(media)
+        self.session.flush()
+
+        dense = np.zeros(DENSE_DIM)
+        sparse = csr_matrix((1, VOCAB_SIZE))
+        published_date = datetime(2012, 12, 12, 12, 12, tzinfo=timezone.utc)
+
+        articles = [
+            Article(
+                link="link_1",
+                title="title",
+                media_id=media.id,
+                content="content",
+                published_at=published_date,
+            ),
+            Article(
+                link="link_2",
+                title="title",
+                media_id=media.id,
+                dense_embedding=dense,
+                sparse_embedding=sparse,
+                content="content",
+                published_at=published_date,
+            ),
+            Article(
+                link="link_3",
+                title="title",
+                media_id=media.id,
+                dense_embedding=dense,
+                content="content",
+                published_at=published_date,
+            ),
+            Article(
+                link="link_4",
+                title="title",
+                media_id=media.id,
+                sparse_embedding=sparse,
+                content="content",
+                published_at=published_date,
+            )
+        ]
+
+        self.session.add_all(articles)
+        self.session.flush()
+
+        with patch.object(self.session, 'close'):
+            retrieved = get_articles(filter=ArticleFilter.ENCODED)
+
+        # Second article should be fetched.
+        self.assertEqual(len(retrieved), 1)
+        self.assertEqual(retrieved[0], articles[1])
+
 
     @patch("src.database.service.get_session")
     def test_update_articles(self, mock_get_session):

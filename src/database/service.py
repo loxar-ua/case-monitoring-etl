@@ -1,12 +1,11 @@
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import func, or_
+from sqlalchemy import func, or_, and_
 
 from datetime import datetime, timedelta
 
-from sqlalchemy.orm import Query
-
 from src.database.models.article import Article
+from src.database import ArticleFilter
 from .session import get_session
 from .models.media import Media
 from .models.article import Article
@@ -87,18 +86,28 @@ def post_article(article_dicts: list[dict]) -> None:
         logger.exception("Error while inserting articles")
 
 
-def get_articles(filter_not_encoded: bool = False) -> list[Article]:
+def get_articles(filter: ArticleFilter = ArticleFilter.ANY) -> list[Article]:
     """
     Fetches all articles from db. If filter_not_encoded set to True
     fetches only articles without dense and sparse encoddings.
-    :param filter_not_encoded: will this filter work
+    :param filter:
+    if ENCODED gives only encoded articles,
+    if NON-ENCODED gives only articles without full encodings (no sparse or dense embedding),
+    if ANY gives both encoded and non-encoded articles
     :return: list of articles
     """
 
     try:
         with get_session() as session:
             query = session.query(Article)
-            if filter_not_encoded:
+            if filter == ArticleFilter.ENCODED:
+                query = query.filter(
+                    and_(
+                        Article.dense_embedding.is_not(None),
+                        Article.sparse_embedding.is_not(None)
+                    )
+                )
+            elif filter == ArticleFilter.NON_ENCODED:
                 query = query.filter(
                     or_(
                         Article.dense_embedding.is_(None),
