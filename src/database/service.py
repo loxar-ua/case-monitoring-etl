@@ -1,6 +1,6 @@
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import func, or_, and_
+from sqlalchemy import func, or_, and_, select
 
 from datetime import datetime, timedelta
 
@@ -117,6 +117,27 @@ def get_articles(filter: ArticleFilter = ArticleFilter.ANY) -> list[Article]:
 
             logger.info("Fetched %s articles", query.count())
             return query.all()
+
+    except SQLAlchemyError:
+        logger.exception("Error while fetching articles")
+        return []
+
+def get_nn_articles(article: Article, k_neighbors: int) -> list[Article]:
+    """
+    Looks for k nearest neighbors for a given article.
+    Uses dense embeddings and their cosine similarity.
+    :return: list of articles
+    """
+
+    try:
+        with get_session() as session:
+            articles = session.scalars(
+                select(Article)
+                .where(Article.id != article.id)
+                .order_by(Article.dense_embedding.max_inner_product(article.dense_embedding))
+                .limit(k_neighbors)
+            )
+            return articles.all()
 
     except SQLAlchemyError:
         logger.exception("Error while fetching articles")

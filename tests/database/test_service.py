@@ -7,7 +7,8 @@ from datetime import datetime, timezone, timedelta
 from scipy.sparse import csr_matrix
 
 from src.database import ArticleFilter
-from src.database.service import get_media, post_article, get_last_published_date, get_articles, update_articles
+from src.database.service import get_media, post_article, get_last_published_date, get_articles, update_articles, \
+    get_nn_articles
 from src.embedder import DENSE_DIM, VOCAB_SIZE
 from tests.base_test_db import BDTestCase
 from src.database.models.media import Media
@@ -361,6 +362,95 @@ class BDTestServiceCase(BDTestCase):
             retrieved = get_articles()
 
         self.assertEqual(retrieved[0].title, new_title)
+
+    def test_get_nn_articles_return_correct_number_of_articles(self):
+        """Tests whether get_nn_articles() returns
+        correct number of nearest neighbor articles"""
+
+        dense = np.zeros(DENSE_DIM)
+        sparse = csr_matrix((1, VOCAB_SIZE))
+        published_date = datetime(2012, 12, 12, 12, 12, tzinfo=timezone.utc)
+
+        articles = [
+            Article(
+                link=f"link_{i}",
+                title="title",
+                media_id=1,
+                dense_embedding=dense,
+                sparse_embedding=sparse,
+                content="content",
+                published_at=published_date,
+            ) for i in range(10)
+        ]
+
+        self.session.add_all(articles)
+        self.session.flush()
+
+        with patch.object(self.session, 'close'):
+            retrieved = get_nn_articles(articles[0], 9)
+
+        self.assertEqual(len(retrieved), 9)
+
+    def test_get_nn_articles_excludes_query_article(self):
+        """Tests whether get_nn_articles() excludes
+        the query article from the results"""
+
+        dense = np.zeros(DENSE_DIM)
+        sparse = csr_matrix((1, VOCAB_SIZE))
+        published_date = datetime(2012, 12, 12, 12, 12, tzinfo=timezone.utc)
+
+        articles = [
+            Article(
+                link=f"link_{i}",
+                title="title",
+                media_id=1,
+                dense_embedding=dense,
+                sparse_embedding=sparse,
+                content="content",
+                published_at=published_date,
+            ) for i in range(10)
+        ]
+
+        self.session.add_all(articles)
+        self.session.flush()
+
+        with patch.object(self.session, 'close'):
+            retrieved = get_nn_articles(articles[0], 10)
+
+        for article in retrieved:
+            self.assertNotEqual(article.link, articles[0].link)
+
+    def test_get_nn_articles_returns_closest_articles(self):
+        """Tests whether get_nn_articles() returns
+        the closest articles based on embeddings"""
+
+        published_date = datetime(2012, 12, 12, 12, 12, tzinfo=timezone.utc)
+
+        articles = []
+        for i in range(10):
+            dense = np.full(DENSE_DIM, i)
+            sparse = csr_matrix((1, VOCAB_SIZE))
+            article = Article(
+                link=f"link_{i}",
+                title="title",
+                media_id=1,
+                dense_embedding=dense,
+                sparse_embedding=sparse,
+                content="content",
+                published_at=published_date,
+            )
+            articles.append(article)
+
+        self.session.add_all(articles)
+        self.session.flush()
+
+        with patch.object(self.session, 'close'):
+            retrieved = get_nn_articles(articles[0], 3)
+
+        expected_links = {"link_1", "link_2", "link_3"}
+        retrieved_links = {article.link for article in retrieved}
+
+        self.assertEqual(retrieved_links, expected_links)
 
 if __name__ == "__main__":
     unittest.main()
