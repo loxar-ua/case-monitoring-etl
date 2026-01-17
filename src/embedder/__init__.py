@@ -21,7 +21,7 @@ embedding_model = BGEM3FlagModel(
     use_fp16=is_cuda,
 )
 
-print("Model loaded on", device)
+logger.info("Model loaded on", device)
 
 DENSE_DIM = embedding_model.model.model.config.hidden_size #1024
 VOCAB_SIZE = embedding_model.tokenizer.vocab_size #250002
