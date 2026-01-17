@@ -363,19 +363,24 @@ class BDTestServiceCase(BDTestCase):
 
         self.assertEqual(retrieved[0].title, new_title)
 
-    def test_get_nn_articles_return_correct_number_of_articles(self):
+    @patch("src.database.service.get_session")
+    def test_get_nn_articles_return_correct_number_of_articles(self, mock_get_session):
+        mock_get_session.return_value = self.session
         """Tests whether get_nn_articles() returns
         correct number of nearest neighbor articles"""
 
         dense = np.zeros(DENSE_DIM)
         sparse = csr_matrix((1, VOCAB_SIZE))
         published_date = datetime(2012, 12, 12, 12, 12, tzinfo=timezone.utc)
+        media = Media(name="test_media_1", sitemap_index_url="index.xml", is_active=True)
+        self.session.add(media)
+        self.session.flush()
 
         articles = [
             Article(
                 link=f"link_{i}",
                 title="title",
-                media_id=1,
+                media_id=media.id,
                 dense_embedding=dense,
                 sparse_embedding=sparse,
                 content="content",
@@ -391,19 +396,24 @@ class BDTestServiceCase(BDTestCase):
 
         self.assertEqual(len(retrieved), 9)
 
-    def test_get_nn_articles_excludes_query_article(self):
+    @patch("src.database.service.get_session")
+    def test_get_nn_articles_excludes_query_article(self, mock_get_session):
+        mock_get_session.return_value = self.session
         """Tests whether get_nn_articles() excludes
         the query article from the results"""
 
         dense = np.zeros(DENSE_DIM)
         sparse = csr_matrix((1, VOCAB_SIZE))
         published_date = datetime(2012, 12, 12, 12, 12, tzinfo=timezone.utc)
+        media = Media(name="test_media_1", sitemap_index_url="index.xml", is_active=True)
+        self.session.add(media)
+        self.session.flush()
 
         articles = [
             Article(
                 link=f"link_{i}",
                 title="title",
-                media_id=1,
+                media_id=media.id,
                 dense_embedding=dense,
                 sparse_embedding=sparse,
                 content="content",
@@ -420,11 +430,17 @@ class BDTestServiceCase(BDTestCase):
         for article in retrieved:
             self.assertNotEqual(article.link, articles[0].link)
 
-    def test_get_nn_articles_returns_closest_articles(self):
+    @patch("src.database.service.get_session")
+    def test_get_nn_articles_returns_closest_articles(self, mock_get_session):
+        mock_get_session.return_value = self.session
+
         """Tests whether get_nn_articles() returns
         the closest articles based on embeddings"""
 
         published_date = datetime(2012, 12, 12, 12, 12, tzinfo=timezone.utc)
+        media = Media(name="test_media_1", sitemap_index_url="index.xml", is_active=True)
+        self.session.add(media)
+        self.session.flush()
 
         articles = []
         for i in range(10):
@@ -433,7 +449,7 @@ class BDTestServiceCase(BDTestCase):
             article = Article(
                 link=f"link_{i}",
                 title="title",
-                media_id=1,
+                media_id=media.id,
                 dense_embedding=dense,
                 sparse_embedding=sparse,
                 content="content",
