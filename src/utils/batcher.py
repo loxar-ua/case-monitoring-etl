@@ -1,5 +1,6 @@
 from math import ceil
-
+import numpy as np
+from scipy.sparse import spmatrix
 from src.logger import logger
 
 def batcher(batch_size: int):
@@ -13,7 +14,7 @@ def batcher(batch_size: int):
 
                 batch_args = []
                 for arg in args:
-                    if isinstance(arg, (list, tuple)) and len(arg) == size:
+                    if isinstance(arg, (list, tuple, spmatrix, np.ndarray)) and len(arg) == size:
                         batch_args.append(arg[chunk_start:chunk_end])
                     else:
                         batch_args.append(arg)
@@ -25,6 +26,6 @@ def batcher(batch_size: int):
                 logger.info("Finished processing batch of size %s", current_real_size)
 
                 if batch_result:
-                    yield from batch_result
+                    yield batch_result
         return wrapper
     return decorator

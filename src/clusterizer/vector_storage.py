@@ -1,9 +1,9 @@
 import faiss
 import numpy as np
-from scipy.sparse import csr_matrix
+from scipy.sparse import csr_matrix, spmatrix
 
 
-def transpose_elements(articles_attrs: list) -> tuple[np.ndarray, np.ndarray, csr_matrix]:
+def transpose_elements(articles_attrs: list) -> tuple[np.ndarray, np.ndarray, spmatrix]:
     """
     Extracts IDs and dense embeddings from articles' attributes.
     :param articles_attrs:
