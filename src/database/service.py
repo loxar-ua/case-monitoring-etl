@@ -86,7 +86,7 @@ def post_article(article_dicts: list[dict]) -> None:
         logger.exception("Error while inserting articles")
 
 
-def get_articles(filter: ArticleFilter = ArticleFilter.ANY) -> list[Article]:
+def get_articles(filter: ArticleFilter = ArticleFilter.ANY, columns: list | None = None) -> list:
     """
     Fetches all articles from db. If filter_not_encoded set to True
     fetches only articles without dense and sparse encoddings.
@@ -97,9 +97,15 @@ def get_articles(filter: ArticleFilter = ArticleFilter.ANY) -> list[Article]:
     :return: list of articles
     """
 
+    if columns is None:
+        columns = [Article]
+    else:
+        columns = [getattr(Article, col) for col in columns]
+
     try:
         with get_session() as session:
-            query = session.query(Article)
+            query = session.query(*columns)
+
             if filter == ArticleFilter.ENCODED:
                 query = query.filter(
                     and_(
@@ -115,34 +121,14 @@ def get_articles(filter: ArticleFilter = ArticleFilter.ANY) -> list[Article]:
                     )
                 )
 
-            logger.info("Fetched %s articles", query.count())
-            return query.all()
+            articles = query.all()
+
+            logger.info("Fetched %s articles", len(articles))
+            return articles
 
     except SQLAlchemyError:
         logger.exception("Error while fetching articles")
         return []
-
-def get_nn_articles(article: Article, k_neighbors: int) -> list[Article]:
-    """
-    Looks for k nearest neighbors for a given article.
-    Uses dense embeddings and their cosine similarity.
-    :return: list of articles
-    """
-
-    try:
-        with get_session() as session:
-            articles = session.scalars(
-                select(Article)
-                .where(Article.id != article.id)
-                .order_by(Article.dense_embedding.max_inner_product(article.dense_embedding))
-                .limit(k_neighbors)
-            )
-            return articles.all()
-
-    except SQLAlchemyError:
-        logger.exception("Error while fetching articles")
-        return []
-
 
 def update_articles(articles: list[Article]):
     """
