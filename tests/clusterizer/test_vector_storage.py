@@ -3,8 +3,53 @@ import numpy as np
 from unittest.mock import MagicMock, patch
 from scipy.sparse import csr_matrix, issparse
 # Ensure VOCAB_SIZE is imported or defined for the test
-from src.clusterizer.vector_storage import transpose_elements, form_faiss_index, VOCAB_SIZE
+from src.clusterizer.vector_storage import transpose_elements, form_faiss_index, VOCAB_SIZE, db_sparse_scipy
 
+class TestDbSparseScipy(unittest.TestCase):
+
+    def test_valid_list_input(self):
+        """Tests standard list of floats (common DB return)."""
+        data = [[0.1, 0.0, 0.5] + [0.0] * (VOCAB_SIZE - 3)]
+        result = db_sparse_scipy(data)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].dtype, np.float32)
+        self.assertEqual(result[0].shape, (1, VOCAB_SIZE))
+
+    def test_dictionary_format(self):
+        """Tests pgvector SPARSEVEC dict format {index: value}."""
+        sparse_dict = {5: 1.2, 10: 0.5}
+        result = db_sparse_scipy([sparse_dict])
+        self.assertEqual(result[0][0, 5], 1.2)
+        self.assertEqual(result[0][0, 10], 0.5)
+        self.assertEqual(result[0].shape, (1, VOCAB_SIZE))
+
+    def test_none_handling(self):
+        """Tests if None values are converted to zero-rows instead of crashing."""
+        result = db_sparse_scipy([None])
+        self.assertEqual(result[0].nnz, 0) # Number of non-zeros should be 0
+        self.assertEqual(result[0].shape, (1, VOCAB_SIZE))
+
+    def test_mixed_types_and_strings(self):
+        """
+        Tests the 'dtype object' fix.
+        DBs sometimes return numbers as strings or mixed ints/floats.
+        """
+        # A list containing a string number and an int
+        dirty_data = [["0.5", 1, 0] + [0] * (VOCAB_SIZE - 3)]
+        result = db_sparse_scipy(dirty_data)
+        self.assertEqual(result[0].dtype, np.float32)
+        self.assertAlmostEqual(result[0][0, 0], 0.5)
+
+    def test_incompatible_garbage_data(self):
+        """Tests if completely invalid data (like a string) defaults to a zero row."""
+        result = db_sparse_scipy(["not_a_vector"])
+        self.assertEqual(result[0].shape, (1, VOCAB_SIZE))
+        self.assertEqual(result[0].nnz, 0)
+
+    def test_empty_input(self):
+        """Tests empty list input."""
+        result = db_sparse_scipy([])
+        self.assertEqual(result, [])
 
 class TestVectorStorage(unittest.TestCase):
 
@@ -15,7 +60,7 @@ class TestVectorStorage(unittest.TestCase):
         self.id_1 = 101
         self.dense_1 = np.random.rand(self.dim).astype(np.float32).tolist()  # Simulating DB list
 
-        self.sparse_1 = [0.0] * self.vocab
+        self.sparse_1 = [float(0)] * self.vocab
         self.sparse_1[5] = 1.0
 
         self.id_2 = 102
@@ -32,7 +77,9 @@ class TestVectorStorage(unittest.TestCase):
         """Checks if lists from DB are correctly converted to matrices."""
         ids, dense_matrix, sparse_matrix = transpose_elements(self.articles_attrs)
 
-        self.assertEqual(ids, [101, 102])
+        self.assertIsInstance(ids, np.ndarray)
+        self.assertEqual(ids.dtype, np.int64)
+        np.testing.assert_array_equal(ids, [101, 102])
 
         self.assertIsInstance(dense_matrix, np.ndarray)
         self.assertEqual(dense_matrix.shape, (2, self.dim))
@@ -66,3 +113,6 @@ class TestVectorStorage(unittest.TestCase):
         mock_faiss.IndexFlatIP.assert_called_once_with(dim)
         mock_index_id.add_with_ids.assert_called_once()
         self.assertEqual(result, mock_index_id)
+
+if __name__ == "__main__":
+    unittest.main()

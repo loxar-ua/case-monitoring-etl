@@ -4,25 +4,29 @@ from scipy.sparse import csr_matrix, spmatrix, vstack
 
 from src.embedder import VOCAB_SIZE
 
-def db_sparse_scipy(sparse_tuple: tuple) -> spmatrix:
+
+def db_sparse_scipy(sparse_tuple):
     processed_sparse = []
     for s in sparse_tuple:
         if s is None:
-            processed_sparse.append(csr_matrix((1, VOCAB_SIZE)))
-        elif isinstance(s, dict):
-            indices = list(s.keys())
-            data = list(s.values())
-            indptr = [0, len(indices)]
-            processed_sparse.append(csr_matrix((data, indices, indptr), shape=(1, VOCAB_SIZE)))
+            processed_sparse.append(csr_matrix((1, VOCAB_SIZE), dtype=np.float32))
         else:
-            processed_sparse.append(csr_matrix(s, shape=(1, VOCAB_SIZE)))
+            try:
+                row = csr_matrix(np.array(s, dtype=np.float32), shape=(1, VOCAB_SIZE))
+                processed_sparse.append(row)
+            except (ValueError, TypeError):
+                if isinstance(s, dict):
+                    indices = list(s.keys())
+                    data = np.array(list(s.values()), dtype=np.float32)
+                    indptr = np.array([0, len(indices)])
+                    processed_sparse.append(csr_matrix((data, indices, indptr), shape=(1, VOCAB_SIZE)))
+                else:
+                    processed_sparse.append(csr_matrix((1, VOCAB_SIZE), dtype=np.float32))
 
-    sparse_matrix = vstack(processed_sparse, dtype=np.float32)
-
-    return sparse_matrix
+    return processed_sparse
 
 
-def transpose_elements(articles_attrs: list) -> tuple[list, np.ndarray, spmatrix]:
+def transpose_elements(articles_attrs: list) -> tuple[np.ndarray, np.ndarray, spmatrix]:
     """
     Extracts IDs and dense embeddings from articles' attributes.
     :param articles_attrs:
@@ -33,10 +37,12 @@ def transpose_elements(articles_attrs: list) -> tuple[list, np.ndarray, spmatrix
 
     ids_tuple, dense_tuple, sparse_tuple = zip(*articles_attrs)
 
-    ids = list(ids_tuple)
+    ids = np.array(ids_tuple, dtype=np.int64)
     dense_matrix = np.array(dense_tuple, dtype=np.float32)
 
-    sparse_matrix = db_sparse_scipy(sparse_tuple)
+    processed_sparse_list = db_sparse_scipy(sparse_tuple)
+
+    sparse_matrix = vstack(processed_sparse_list, dtype=np.float32)
 
     return ids, dense_matrix, sparse_matrix
 

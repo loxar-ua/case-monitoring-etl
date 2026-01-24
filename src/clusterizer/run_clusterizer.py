@@ -44,5 +44,5 @@ def run_clusterizer():
 
     create_clusters(labels)
 
-    assign_clusters_to_articles(ids, labels)
+    assign_clusters_to_articles(ids.tolist(), labels)
 
