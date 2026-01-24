@@ -3,7 +3,7 @@ import numpy as np
 from scipy.sparse import csr_matrix, spmatrix
 
 
-def transpose_elements(articles_attrs: list) -> tuple[np.ndarray, np.ndarray, spmatrix]:
+def transpose_elements(articles_attrs: list) -> tuple[list, np.ndarray, spmatrix]:
     """
     Extracts IDs and dense embeddings from articles' attributes.
     :param articles_attrs:
@@ -11,7 +11,7 @@ def transpose_elements(articles_attrs: list) -> tuple[np.ndarray, np.ndarray, sp
     """
     ids_tuple, dense_tuple, sparse_tuple = zip(*articles_attrs)
 
-    ids = np.array(ids_tuple, dtype=np.int64)
+    ids = ids_tuple.to_list()
     dense_matrix = np.array(dense_tuple, dtype=np.float32)
     sparse_matrix = csr_matrix(csr_matrix, dtype=np.float32)
 

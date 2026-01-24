@@ -1,7 +1,7 @@
-from src.clusterizer.graph import build_graph, get_cluster_labels, assign_clusters_to_articles
+from src.clusterizer.graph import build_graph, get_cluster_labels
 from src.clusterizer.vector_storage import transpose_elements, form_faiss_index
 from src.database import ArticleFilter
-from src.database.service import get_articles, create_clusters
+from src.database.service import get_articles, create_clusters, assign_clusters_to_articles
 from src.embedder import DENSE_DIM
 
 ALPHA = 0.5
