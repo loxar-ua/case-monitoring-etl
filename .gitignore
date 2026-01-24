@@ -2,7 +2,8 @@
 .env
 .topromptignore
 __pycache__/
-models/bge-m3/
+models/
+!database/models
 *.pyc
 *.pyo
 *.pyd
