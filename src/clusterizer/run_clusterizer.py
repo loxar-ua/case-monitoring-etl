@@ -3,6 +3,7 @@ from src.clusterizer.vector_storage import transpose_elements, form_faiss_index
 from src.database import ArticleFilter
 from src.database.service import get_articles, create_clusters, assign_clusters_to_articles
 from src.embedder import DENSE_DIM
+from src.logger import logger
 
 ALPHA = 0.5
 MIN_THRESHOLD = 0.55
@@ -11,9 +12,13 @@ RESOLUTION = 30
 
 def run_clusterizer():
 
-    artices_attrs = get_articles(columns=['id', 'dense_embedding', 'sparse_embedding'])
+    articles_attrs = get_articles(columns=['id', 'dense_embedding', 'sparse_embedding'], filter=ArticleFilter.ENCODED)
 
-    ids, dense_matrix, sparse_matrix = transpose_elements(artices_attrs)
+    if not articles_attrs:
+        logger.info("No articles found.")
+        return
+
+    ids, dense_matrix, sparse_matrix = transpose_elements(articles_attrs)
 
     faiss_index = form_faiss_index(ids, dense_matrix, dimensionality=DENSE_DIM)
 
@@ -27,7 +32,15 @@ def run_clusterizer():
         sparse_matrix=sparse_matrix,
     )
 
+    if graph is None:
+        logger.info("Graph is empty (no sufficient similarities found). Stopping.")
+        return
+
     labels = get_cluster_labels(graph, resolution=RESOLUTION)
+
+    if not labels:
+        logger.info("Clustering produced no labels. Stopping.")
+        return
 
     create_clusters(labels)
 
