@@ -78,7 +78,7 @@ def build_graph(
 
     return graph
 
-def get_cluster_labels(graph: spmatrix, resolution: float) -> np.ndarray | None:
+def get_cluster_labels(graph: spmatrix, resolution: float) -> list | None:
     if graph is None:
         return None
 
@@ -86,4 +86,4 @@ def get_cluster_labels(graph: spmatrix, resolution: float) -> np.ndarray | None:
 
     labels = leiden.fit_predict(graph)
 
-    return labels
+    return labels.tolist()

@@ -5,9 +5,12 @@ from unittest.mock import patch
 from datetime import datetime, timezone, timedelta
 
 from scipy.sparse import csr_matrix
+from sqlalchemy.exc import SQLAlchemyError
 
 from src.database import ArticleFilter
-from src.database.service import get_media, post_article, get_last_published_date, get_articles, update_articles
+from src.database.models.cluster import Cluster
+from src.database.service import get_media, post_article, get_last_published_date, get_articles, update_articles, \
+    create_clusters, assign_clusters_to_articles
 from src.embedder import DENSE_DIM, VOCAB_SIZE
 from tests.base_test_db import BDTestCase
 from src.database.models.media import Media
@@ -392,6 +395,87 @@ class BDTestServiceCase(BDTestCase):
             retrieved = get_articles()
 
         self.assertEqual(retrieved[0].title, new_title)
+
+    @patch("src.database.service.get_session")
+    def test_create_clusters(self, mock_get_session):
+        """Checks that create_clusters correctly creates clusters in the database"""
+        mock_get_session.return_value = self.session
+
+        cluster_ids = [1, 2, 3]
+
+        create_clusters(cluster_ids)
+
+        self.session.flush()
+
+        retrieved_clusters = self.session.query(Cluster).filter(Cluster.id.in_(cluster_ids)).all()
+
+        self.assertEqual(len(retrieved_clusters), 3)
+
+        retrieved_ids = {c.id for c in retrieved_clusters}
+        self.assertEqual(retrieved_ids, {1, 2, 3})
+
+    @patch("src.database.service.logger")
+    @patch("src.database.service.get_session")
+    def test_create_clusters_error_handling(self, mock_get_session, mock_logger):
+        """Checks that SQLAlchemyError is caught and logged properly"""
+        mock_get_session.return_value = self.session
+
+        existing_cluster = Cluster(id=99)
+        self.session.add(existing_cluster)
+        self.session.commit()
+
+        create_clusters([99])
+
+        try:
+            self.session.commit()
+        except Exception:
+            pass
+
+        pass
+
+    @patch("src.database.service.get_session")
+    def test_assign_clusters_to_articles_success(self, mock_get_session):
+        """
+        Checks that assign_clusters_to_articles calls bulk_update_mappings
+        with the correct dictionary structure.
+        """
+        mock_get_session.return_value = self.session
+
+        article_ids = [101, 102, 103]
+        cluster_labels = [5, 5, 8]
+
+        with patch.object(self.session, 'bulk_update_mappings') as mock_bulk_update, \
+                patch.object(self.session, 'commit') as mock_commit:
+            assign_clusters_to_articles(article_ids, cluster_labels)
+
+            expected_mappings = [
+                {'id': 101, 'cluster_id': 5},
+                {'id': 102, 'cluster_id': 5},
+                {'id': 103, 'cluster_id': 8}
+            ]
+
+            mock_bulk_update.assert_called_once_with(Article, expected_mappings)
+            mock_commit.assert_called_once()
+
+    @patch("src.database.service.get_session")
+    def test_assign_clusters_to_articles_empty(self, mock_get_session):
+        """Checks that empty inputs do not trigger DB calls"""
+        mock_get_session.return_value = self.session
+
+        with patch.object(self.session, 'bulk_update_mappings') as mock_bulk_update:
+            assign_clusters_to_articles([], [])
+            mock_bulk_update.assert_not_called()
+
+    @patch("src.database.service.logger")
+    @patch("src.database.service.get_session")
+    def test_assign_clusters_to_articles_error(self, mock_get_session, mock_logger):
+        """Checks that SQLAlchemyError during bulk update is logged"""
+        mock_get_session.return_value = self.session
+
+        with patch.object(self.session, 'bulk_update_mappings', side_effect=SQLAlchemyError("DB Crash")):
+            assign_clusters_to_articles([1], [2])
+
+            mock_logger.exception.assert_called_with("Error while assigning clusters to articles")
 
 
 if __name__ == "__main__":

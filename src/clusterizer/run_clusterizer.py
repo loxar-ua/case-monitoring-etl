@@ -1,6 +1,7 @@
-from src.clusterizer.graph import build_graph, get_cluster_labels
+from src.clusterizer.graph import build_graph, get_cluster_labels, assign_clusters_to_articles
 from src.clusterizer.vector_storage import transpose_elements, form_faiss_index
-from src.database.service import get_articles
+from src.database import ArticleFilter
+from src.database.service import get_articles, create_clusters
 from src.embedder import DENSE_DIM
 
 ALPHA = 0.5
@@ -10,7 +11,7 @@ RESOLUTION = 30
 
 def run_clusterizer():
 
-    artices_attrs = get_articles(columns=['id', 'dense_embedding'])
+    artices_attrs = get_articles(columns=['id', 'dense_embedding', 'sparse_embedding'])
 
     ids, dense_matrix, sparse_matrix = transpose_elements(artices_attrs)
 
@@ -28,4 +29,7 @@ def run_clusterizer():
 
     labels = get_cluster_labels(graph, resolution=RESOLUTION)
 
+    create_clusters(labels)
+
+    assign_clusters_to_articles(ids, labels)
 

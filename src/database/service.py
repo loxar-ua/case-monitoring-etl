@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 from src.database.models.article import Article
 from src.database import ArticleFilter
+from .models.cluster import Cluster
 from .session import get_session
 from .models.media import Media
 from .models.article import Article
@@ -145,3 +146,45 @@ def update_articles(articles: list[Article]):
 
     except SQLAlchemyError:
         logger.exception("Error while updating articles")
+
+def create_clusters(ids: list):
+    """
+    Create empty clusters with such ids.
+    :param ids:
+    :return:
+    """
+
+    clusters = [Cluster(id=id) for id in ids]
+
+    try:
+        with get_session() as session:
+            session.add_all(clusters)
+            session.commit()
+            logger.info("Created %s clusters", len(clusters))
+
+    except SQLAlchemyError:
+        logger.exception("Error while creating clusters")
+
+def assign_clusters_to_articles(ids: list, labels: list) -> None:
+    """
+    Directly updates the cluster_id in the database without fetching Article objects.
+    """
+    if not ids or not labels:
+        return
+
+    mappings = [
+        {'id': int(article_id), 'cluster_id': int(cluster_id)}
+        for article_id, cluster_id in zip(ids, labels)
+    ]
+
+    try:
+        with get_session() as session:
+
+            session.bulk_update_mappings(Article, mappings)
+
+            session.commit()
+            logger.info("Assigned clusters to %s articles", len(mappings))
+
+    except SQLAlchemyError:
+        logger.exception("Error while assigning clusters to articles")
+
