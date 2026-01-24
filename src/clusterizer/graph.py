@@ -2,35 +2,32 @@ import faiss
 import numpy as np
 from scipy.sparse import csr_matrix, spmatrix
 from sknetwork.clustering import Leiden
-
 from src.logger import logger
 from src.utils.batcher import batcher
 
+
 @batcher(1000)
 def form_adjancy_relationship(
-    size: int,
-    ids: np.ndarray,
-    dense_chunk: np.ndarray,
-    sparse_matrix: spmatrix,
-    faiss_index: faiss.IndexIDMap,
-    id_to_idx: dict,
-    alpha: float = 0.5,
-    min_threshold: float = 0.55,
-    k_neighbors: int = 50
+        size: int,
+        local_indices_chunk: np.ndarray,  # These will be e.g. [1000...1999]
+        dense_chunk: np.ndarray,
+        sparse_matrix: spmatrix,
+        faiss_index: faiss.Index,
+        alpha: float = 0.5,
+        min_threshold: float = 0.55,
+        k_neighbors: int = 50
 ):
-    sim_dense_batch, target_ids_batch = faiss_index.search(dense_chunk, k=k_neighbors + 1)
+    # FAISS returns the local indices (0 to N-1) because we used a standard Index
+    sim_dense_batch, target_indices_batch = faiss_index.search(dense_chunk, k=k_neighbors + 1)
 
     sim_dense_batch = sim_dense_batch[:, 1:]
-    target_ids_batch = target_ids_batch[:, 1:]
+    target_indices_batch = target_indices_batch[:, 1:]
 
-    map_func = np.vectorize(id_to_idx.get)
-    target_indices_batch = map_func(target_ids_batch)
-
-    current_chunk_indices = map_func(ids)
-
-    sources_repeated = np.repeat(current_chunk_indices, target_indices_batch.shape[1])
+    # Map sources to the local indices provided by the batcher
+    sources_repeated = np.repeat(local_indices_chunk, target_indices_batch.shape[1])
     targets_flat = target_indices_batch.flatten()
 
+    # Both sources and targets are now valid row indices for our compact sparse_matrix
     vecs_target = sparse_matrix[targets_flat]
     vecs_source = sparse_matrix[sources_repeated]
 
@@ -38,55 +35,46 @@ def form_adjancy_relationship(
     sim_dense_flat = sim_dense_batch.ravel()
 
     weights_flat = (alpha * sim_sparse_flat) + (1 - alpha) * sim_dense_flat
-
     mask = weights_flat > min_threshold
+
+
+    logger.info(f"Sample similarity: {weights_flat[:5]}")
 
     return sources_repeated[mask], targets_flat[mask], weights_flat[mask]
 
 
 def build_graph(
-    faiss_index: faiss.IndexIDMap,
-    ids: np.ndarray,
-    dense_matrix: np.ndarray,
-    sparse_matrix: spmatrix,
-    alpha: float,
-    min_threshold: float,
-    k_neighbors: int
+        faiss_index: faiss.Index,
+        dense_matrix: np.ndarray,
+        sparse_matrix: spmatrix,
+        alpha: float,
+        min_threshold: float,
+        k_neighbors: int
 ) -> spmatrix | None:
+    n_articles = dense_matrix.shape[0]
 
-    n_articles = len(ids)
-
-    id_to_idx = {id_val: i for i, id_val in enumerate(ids)}
+    # We pass a range of integers representing the row indices
+    local_indices = np.arange(n_articles)
 
     batch_iterator = form_adjancy_relationship(
         n_articles,
-        ids,
+        local_indices,
         dense_matrix,
         sparse_matrix=sparse_matrix,
         faiss_index=faiss_index,
-        id_to_idx=id_to_idx,
         alpha=alpha,
         min_threshold=min_threshold,
         k_neighbors=k_neighbors,
     )
 
-    results = list(batch_iterator)
-
+    # Since your batcher returns a list, we wrap it to ensure it's iterable
+    results = list(batch_iterator) if batch_iterator else []
     if not results:
         return None
 
-    all_sources_tuple, all_targets_tuple, all_weights_tuple = zip(*results)
+    all_sources, all_targets, all_weights = map(np.concatenate, zip(*results))
 
-    all_sources = np.concatenate(all_sources_tuple)
-    all_targets = np.concatenate(all_targets_tuple)
-    all_weights = np.concatenate(all_weights_tuple)
-
-    graph = csr_matrix(
-        (all_weights, (all_sources, all_targets)),
-        shape=(n_articles, n_articles)
-    )
-
-    return graph
+    return csr_matrix((all_weights, (all_sources, all_targets)), shape=(n_articles, n_articles))
 
 def get_cluster_labels(graph: spmatrix, resolution: float) -> list | None:
     if graph is None or graph.nnz == 0:
