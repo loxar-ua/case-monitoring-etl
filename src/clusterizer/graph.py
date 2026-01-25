@@ -2,6 +2,8 @@ import faiss
 import numpy as np
 from scipy.sparse import csr_matrix, spmatrix
 from sknetwork.clustering import Leiden
+import igraph as ig
+import leidenalg as la
 from src.logger import logger
 from src.utils.batcher import batcher
 
@@ -76,9 +78,20 @@ def get_cluster_labels(graph: spmatrix, resolution: float) -> list | None:
         return None
 
     try:
-        leiden = Leiden(resolution=resolution)
-        labels = leiden.fit_predict(graph)
-        return labels.tolist()
-    except ValueError as e:
+        sources, targets = graph.nonzero()
+        weights = graph.data
+
+        g = ig.Graph(n=graph.shape[0], edges=list(zip(sources, targets)), directed=False)
+        g.es['weight'] = weights
+
+        partition = la.find_partition(
+            g,
+            la.RBConfigurationVertexPartition,
+            weights=g.es['weight'],
+            resolution_parameter=resolution
+        )
+
+        return partition.membership
+    except Exception as e:
         logger.error(f"Clustering failed: {e}")
         return None

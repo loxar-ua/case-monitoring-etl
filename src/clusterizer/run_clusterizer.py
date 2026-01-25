@@ -57,6 +57,7 @@ def run_clusterizer():
     if labels is None:
         return
 
-    create_clusters(labels)
+    unique_cluster_ids = [int(c) for c in set(labels)]
+    create_clusters(unique_cluster_ids)
 
     assign_clusters_to_articles(ids.tolist(), labels)
