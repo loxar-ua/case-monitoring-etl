@@ -1,49 +1,40 @@
-import faiss
 import numpy as np
-from scipy.sparse import csr_matrix, spmatrix, vstack
-from sklearn.preprocessing import normalize
-from src.embedder import VOCAB_SIZE
-
-# file: src/clusterizer/vector_storage.py
-import numpy as np
+import re
 from scipy.sparse import csr_matrix, spmatrix
 from sklearn.preprocessing import normalize
 from src.embedder import VOCAB_SIZE
 from src.logger import logger
 
 
-def parse_pgvector_string(sparse_str: str) -> dict:
+def parse_pgvector_sparse(sparse_data) -> dict:
     """
-    Parses Postgres sparsevec string: "{50:0.037, 62:0.08}/250002"
-    Returns: dict {int: float}
+    Robustly parses any Postgres sparsevec string format using Regex.
+    Matches "int:float" patterns directly, ignoring all wrappers/braces.
     """
+    if sparse_data is None:
+        return {}
+
+    if isinstance(sparse_data, dict):
+        return sparse_data
+
+    if isinstance(sparse_data, bytes):
+        sparse_data = sparse_data.decode('utf-8')
+
+    if not isinstance(sparse_data, str):
+        sparse_data = str(sparse_data)
+
     try:
-        if not sparse_str:
+        pattern = re.compile(r'(\d+)\s*:\s*([\d\.eE+-]+)')
+
+        matches = pattern.findall(sparse_data)
+
+        if not matches:
             return {}
 
-        # 1. Remove the trailing dimensionality if present (e.g., "/250002")
-        if '/' in sparse_str:
-            sparse_str = sparse_str.split('/')[0]
-
-        # 2. Strip the curly braces
-        sparse_str = sparse_str.strip('{}')
-
-        if not sparse_str:
-            return {}
-
-        # 3. Split by comma to get "index:value" pairs
-        pairs = sparse_str.split(',')
-
-        result = {}
-        for pair in pairs:
-            # 4. Split each pair by colon
-            idx_str, val_str = pair.split(':')
-            result[int(idx_str)] = float(val_str)
-
-        return result
+        return {int(k): float(v) for k, v in matches}
 
     except Exception as e:
-        logger.error(f"Failed to parse sparsevec string: {sparse_str[:20]}... Error: {e}")
+        logger.warning(f"Regex parse failed: {sparse_data[:50]}... Error: {e}")
         return {}
 
 
@@ -53,6 +44,7 @@ def transpose_elements(articles_attrs: list) -> tuple[np.ndarray, np.ndarray, sp
 
     ids_list = []
     dense_list = []
+
     all_rows = []
     all_cols = []
     all_data = []
@@ -61,21 +53,20 @@ def transpose_elements(articles_attrs: list) -> tuple[np.ndarray, np.ndarray, sp
         ids_list.append(art_id)
         dense_list.append(dense)
 
-        # --- PARSING LOGIC START ---
-        # Handle the raw string from Postgres
-        if isinstance(sparse, str):
-            sparse = parse_pgvector_string(sparse)
-        # --- PARSING LOGIC END ---
+        # Use Regex parser
+        sparse_dict = parse_pgvector_sparse(sparse)
 
-        if sparse and isinstance(sparse, dict):
-            for col, val in sparse.items():
-                all_rows.append(local_idx)  # Correct local index
-                all_cols.append(col)  # Already int from our parser
+        if sparse_dict:
+            for col, val in sparse_dict.items():
+                all_rows.append(local_idx)
+                all_cols.append(col)
                 all_data.append(val)
 
     ids = np.array(ids_list, dtype=np.int64)
-    # Ensure dense is float32 for FAISS
     dense_matrix = np.array(dense_list, dtype=np.float32)
+
+    if not all_data:
+        logger.warning("CRITICAL: No sparse data extracted from any article. Check regex logs.")
 
     sparse_matrix = csr_matrix(
         (all_data, (all_rows, all_cols)),
@@ -88,14 +79,9 @@ def transpose_elements(articles_attrs: list) -> tuple[np.ndarray, np.ndarray, sp
 
     return ids, dense_matrix, sparse_matrix
 
-def form_faiss_index(dense_matrix: np.ndarray, dimensionality: int) -> faiss.IndexFlatIP:
-    """
-    Forms FAISS index from articles' dense embeddings.
-    :param articles:
-    :return: faiss index
-    """
 
+def form_faiss_index(dense_matrix: np.ndarray, dimensionality: int):
+    import faiss
     index = faiss.IndexFlatIP(dimensionality)
     index.add(dense_matrix)
-
     return index

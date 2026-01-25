@@ -1,3 +1,5 @@
+import numpy as np
+
 from src.clusterizer.graph import build_graph, get_cluster_labels
 from src.clusterizer.vector_storage import transpose_elements, form_faiss_index
 from src.database import ArticleFilter
@@ -31,6 +33,9 @@ def run_clusterizer():
         return
 
     ids, dense_matrix, sparse_matrix = transpose_elements(articles_attrs)
+
+    logger.info(f"Dense Matrix Shape: {dense_matrix.shape}")
+    logger.info(f"Sparse Matrix NNZ: {sparse_matrix.nnz}")
 
     faiss_index = form_faiss_index(dense_matrix, dimensionality=DENSE_DIM)
 
