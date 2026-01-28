@@ -11,6 +11,9 @@ from .session import get_session
 from .models.media import Media
 from .models.article import Article
 from ..logger import logger
+from sqlalchemy.orm import Session
+from src.database.models.article import Article
+from src.synthesizer.relevancy.pipeline import RelevancyPipeline
 
 
 def get_media() -> list[Media]:
@@ -227,4 +230,31 @@ def assign_clusters_to_articles(ids: list, labels: list) -> None:
 
     except Exception:
         logger.exception("Error while assigning clusters to articles")
+
+
+
+
+
+
+def relevancy_pipeline(session: Session, llm_client, batch_commit: int = 10):
+    pipeline = RelevancyPipeline(llm_client)
+
+    clusters = session.query(Cluster).all()
+
+    processed = 0
+    for cluster in clusters:
+        articles = session.query(Article).filter_by(cluster_id=cluster.id).all()
+
+        if len(articles) <= 2:
+            continue
+
+        result = pipeline.relevancy(articles)
+        cluster.is_relevant = result.is_relevant
+
+        processed += 1
+
+        if processed % batch_commit == 0:
+            session.commit()
+
+    session.commit()
 
