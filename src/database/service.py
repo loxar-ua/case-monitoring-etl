@@ -4,12 +4,14 @@ from sqlalchemy import func, or_, and_
 
 from datetime import datetime, timedelta
 
-from src.database.models.article import Article
 from src.database import ArticleFilter
 from .session import get_session
 from .models.media import Media
-from .models.article import Article
 from ..logger import logger
+from sqlalchemy.orm import Session
+from src.database.models.article import Article
+from src.database.models.cluster import Cluster
+from src.synthesizer.relevancy.pipeline import RelevancyPipeline
 
 
 def get_media() -> list[Media]:
@@ -138,3 +140,30 @@ def update_articles(articles: list[Article]):
 
     except SQLAlchemyError:
         logger.exception("Error while updating articles")
+
+
+
+
+
+def relevancy_pipeline(session: Session, llm_client, batch_commit: int = 10):
+    pipeline = RelevancyPipeline(llm_client)
+
+    clusters = session.query(Cluster).all()
+
+    processed = 0
+    for cluster in clusters:
+        articles = session.query(Article).filter_by(cluster_id=cluster.id).all()
+
+        if len(articles) <= 2:
+            continue
+
+        result = pipeline.relevancy(articles)
+        cluster.is_relevant = result.is_relevant
+
+        processed += 1
+
+        if processed % batch_commit == 0:
+            session.commit()
+
+    session.commit()
+
