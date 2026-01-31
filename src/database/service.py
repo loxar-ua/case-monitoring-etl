@@ -154,37 +154,77 @@ def create_clusters(ids: list):
     :return:
     """
 
-    clusters = [Cluster(id=id) for id in ids]
+    if not ids: return
+
+    clean_ids = [int(i) for i in ids]
+
+    BATCH_SIZE = 1000
 
     try:
         with get_session() as session:
-            session.add_all(clusters)
-            session.commit()
-            logger.info("Created %s clusters", len(clusters))
+            for i in range(0, len(clean_ids), BATCH_SIZE):
+                chunk = clean_ids[i: i + BATCH_SIZE]
 
-    except SQLAlchemyError:
-        logger.exception("Error while creating clusters")
+                stmt = insert(Cluster).values([{'id': x} for x in chunk])
+                stmt = stmt.on_conflict_do_nothing(index_elements=['id'])
+
+                session.execute(stmt)
+
+            session.commit()
+            logger.info(f"Ensured {len(clean_ids)} clusters exist (in batches).")
+
+    except SQLAlchemyError as e:
+        logger.exception("Error creating clusters")
+        raise e
+
+
+
+from psycopg2.extras import execute_values
+import math
 
 def assign_clusters_to_articles(ids: list, labels: list) -> None:
     """
-    Directly updates the cluster_id in the database without fetching Article objects.
+    Updates cluster_id using Postgres 'UPDATE FROM VALUES'.
+    Batches COMMITS to avoid locking the table for too long.
     """
     if not ids or not labels:
         return
 
-    mappings = [
-        {'id': int(article_id), 'cluster_id': int(cluster_id)}
-        for article_id, cluster_id in zip(ids, labels)
-    ]
+    data = list(zip([int(x) for x in ids], [int(y) for y in labels]))
+    total = len(data)
+
+    BATCH_SIZE = 5000
+
+    sql = """
+          UPDATE article AS a
+          SET cluster_id = v.new_cluster_id
+              FROM \
+              (VALUES %s) \
+              AS v(art_id, new_cluster_id)
+        WHERE a.id = v.art_id \
+          """
 
     try:
         with get_session() as session:
+            conn = session.connection().connection
 
-            session.bulk_update_mappings(Article, mappings)
+            with conn.cursor() as cursor:
+                for i in range(0, total, BATCH_SIZE):
+                    chunk = data[i: i + BATCH_SIZE]
 
-            session.commit()
-            logger.info("Assigned clusters to %s articles", len(mappings))
+                    execute_values(
+                        cursor,
+                        sql,
+                        chunk,
+                        template="(%s, %s)",
+                        page_size=1000
+                    )
+                    conn.commit()
 
-    except SQLAlchemyError:
+                    logger.info(f"Fast-update progress: {min(i + BATCH_SIZE, total)} / {total}")
+
+            logger.info(f"Finished assigning clusters to {total} articles.")
+
+    except Exception:
         logger.exception("Error while assigning clusters to articles")
 
