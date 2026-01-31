@@ -3,17 +3,17 @@ import logging
 import re
 from pathlib import Path
 
+
 from src.database.models.article import Article
-from src.synthesizer.relevancy.schemas import RelevancyResult
+from src.synthesizer.name_cluster.schemas import NameResult
 from src.utils.build_prompt import build_prompt
 #прописати шлях до ллм
 
 path_file=Path(__file__).resolve().parent
 file_prompt= "prompt.txt"
-
 logger = logging.getLogger(__name__)
 
-class RelevancyPipeline:
+class NamePipeline:
     def __init__(self, llm_client: LLMService):
         self.llm_client = llm_client
 
@@ -27,7 +27,7 @@ class RelevancyPipeline:
             for a in articles
         )
 
-    def relevancy(self, articles: list[Article]) -> RelevancyResult:
+    def name_cluster(self, articles: list[Article]) -> NameResult:
         document = self.build_articles_block(articles)
         prompt = build_prompt(document, file_prompt)
 
@@ -39,6 +39,6 @@ class RelevancyPipeline:
 
         payload = json.loads(match.group(0))
 
-        return RelevancyResult(
-            is_relevant=bool(payload["is_relevant"])
+        return NameResult(
+            name=str(payload["name"])
         )
