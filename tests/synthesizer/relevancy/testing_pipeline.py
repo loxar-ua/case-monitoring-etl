@@ -1,7 +1,7 @@
 from collections import defaultdict
 import csv
 
-from src.synthesizer.relevancy.tests.schemas import Article
+from tests.synthesizer.relevancy.schemas import Article
 
 
 def load_articles_from_csv(path: str) -> list[Article]:
