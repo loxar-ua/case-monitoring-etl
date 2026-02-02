@@ -4,7 +4,7 @@ from pathlib import Path
 import unittest
 from unittest.mock import MagicMock
 
-from tests.synthesizer.relevancy.schemas import Article
+from src.database.models.article import Article
 from src.synthesizer.relevancy.pipeline import RelevancyPipeline
 from src.synthesizer.relevancy.schemas import RelevancyResult
 
@@ -54,8 +54,8 @@ class TestRelevancyPipeline(unittest.TestCase):
         self.mock_llm = MagicMock()
         self.pipeline = RelevancyPipeline(llm_client=self.mock_llm)
 
-        articles = load_articles_from_csv(CSV_PATH)
-        self.clusters = group_by_cluster(articles)
+        self.articles = load_articles_from_csv(CSV_PATH)
+        self.clusters = group_by_cluster(self.articles)
 
     def test_relevancy_true(self):
         self.mock_llm.get_response.return_value = '{"is_relevant": true}'

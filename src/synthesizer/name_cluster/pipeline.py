@@ -7,10 +7,11 @@ from pathlib import Path
 from src.database.models.article import Article
 from src.synthesizer.name_cluster.schemas import NameResult
 from src.utils.build_prompt import build_prompt
-#прописати шлях до ллм
+from src.synthesizer.llm_service import LLMService
 
 path_file=Path(__file__).resolve().parent
-file_prompt= "prompt.txt"
+file_prompt= path_file/ "prompt.txt"
+
 logger = logging.getLogger(__name__)
 
 class NamePipeline:
