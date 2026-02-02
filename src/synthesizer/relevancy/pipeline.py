@@ -8,6 +8,7 @@ from src.synthesizer.relevancy.schemas import RelevancyResult
 from src.utils.build_prompt import build_prompt
 from src.synthesizer.llm_service import LLMService
 
+
 path_file=Path(__file__).resolve().parent
 file_prompt= path_file/ "prompt.txt"
 
