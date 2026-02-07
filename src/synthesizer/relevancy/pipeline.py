@@ -24,7 +24,7 @@ class RelevancyPipeline:
         return "\n".join(
             f"[id]: {a.id}\n"
             f"title: {a.title}\n"
-            f"content: {a.content}\n"
+            f"content: {(a.content or '')[:300]}...\n"
             for a in articles
         )
 

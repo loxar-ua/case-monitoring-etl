@@ -3,18 +3,18 @@ import logging
 import re
 from pathlib import Path
 
-
 from src.database.models.article import Article
-from src.synthesizer.name_cluster.schemas import NameResult
+from src.synthesizer.cluster_category.schemas import CategoryResult
 from src.utils.build_prompt import build_prompt
 from src.synthesizer.llm_service import LLMService
+
 
 path_file=Path(__file__).resolve().parent
 file_prompt= path_file/ "prompt.txt"
 
 logger = logging.getLogger(__name__)
 
-class NamePipeline:
+class CategoryPipeline:
     def __init__(self, llm_client: LLMService):
         self.llm_client = llm_client
 
@@ -28,18 +28,23 @@ class NamePipeline:
             for a in articles
         )
 
-    def name_cluster(self, articles: list[Article]) -> NameResult:
+    def categorize_cluster(self, articles: list[Article]) -> CategoryResult:
         document = self.build_articles_block(articles)
+
         prompt = build_prompt(document, file_prompt)
 
         raw_response = self.llm_client.get_response(prompt)
 
         match = re.search(r"\{.*\}", raw_response, re.DOTALL)
         if not match:
+            logger.error(f"LLM output error: {raw_response}")
             raise ValueError(f"LLM did not return JSON: {raw_response}")
 
-        payload = json.loads(match.group(0))
+        try:
+            payload = json.loads(match.group(0))
+        except json.JSONDecodeError:
+            raise ValueError(f"Invalid JSON from LLM: {match.group(0)}")
 
-        return NameResult(
-            name=str(payload["name"])
+        return CategoryResult(
+            categories=payload.get("categories", [])
         )
