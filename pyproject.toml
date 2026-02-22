@@ -15,4 +15,5 @@ dependencies = [
     "scipy",
     "sqlalchemy",
     "testcontainers",
+    "llama-cpp-python"
 ]
