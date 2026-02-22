@@ -184,7 +184,6 @@ def create_clusters(ids: list):
 
 
 from psycopg2.extras import execute_values
-import math
 
 def assign_clusters_to_articles(ids: list, labels: list) -> None:
     """
@@ -231,48 +230,4 @@ def assign_clusters_to_articles(ids: list, labels: list) -> None:
 
     except Exception:
         logger.exception("Error while assigning clusters to articles")
-
-
-
-def relevancy_pipeline(session: Session, llm_client, batch_commit: int = 10):
-    pipeline = RelevancyPipeline(llm_client)
-
-    clusters = session.query(Cluster).all()
-
-    processed = 0
-    for cluster in clusters:
-        articles = session.query(Article).filter_by(cluster_id=cluster.id).all()
-
-        if len(articles) <= 2:
-            continue
-
-        result = pipeline.relevancy(articles)
-        cluster.is_relevant = result.is_relevant
-
-        processed += 1
-
-        if processed % batch_commit == 0:
-            session.commit()
-
-    session.commit()
-
-def name_cluster_pipeline(session: Session, llm_client, batch_commit: int = 10):
-    pipeline = NamePipeline(llm_client)
-
-    clusters = session.query(Cluster).filter_by(Cluster.is_relevant.is_(True)).all()
-
-    processed = 0
-    for cluster in clusters:
-        articles = session.query(Article).filter_by(cluster_id=cluster.id).all()
-
-
-        result = pipeline.name_cluster(articles)
-        cluster.name = result.name
-
-        processed += 1
-
-        if processed % batch_commit == 0:
-            session.commit()
-
-    session.commit()
 

@@ -12,6 +12,7 @@ class Cluster(Base):
     summary: Mapped[str] = mapped_column(String, default="")
     is_relevant: Mapped[bool] = mapped_column(Boolean, default=False)
     featured_image_url: Mapped[str] = mapped_column(String)
+    is_checked: Mapped[bool] = mapped_column(Boolean, default=False)
 
     categories: Mapped[list['Category']] = relationship(
         secondary=association_table,
