@@ -234,9 +234,6 @@ def assign_clusters_to_articles(ids: list, labels: list) -> None:
 
 
 
-
-
-
 def relevancy_pipeline(session: Session, llm_client, batch_commit: int = 10):
     pipeline = RelevancyPipeline(llm_client)
 

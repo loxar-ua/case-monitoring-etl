@@ -19,6 +19,10 @@ class Cluster(Base):
     )
 
     articles: Mapped[list['Article']] = relationship(back_populates="cluster")
+    events: Mapped[list['Event']] = relationship(
+        back_populates="cluster",
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return "<Cluster %r>" % self.name

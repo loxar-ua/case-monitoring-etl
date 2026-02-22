@@ -5,29 +5,39 @@ from pgvector.sqlalchemy import Vector, SPARSEVEC
 from datetime import datetime
 
 from .base import Base
-from .media import Media
-from .cluster import Cluster
+
 from src.embedder import DENSE_DIM, VOCAB_SIZE
+
 
 class Article(Base):
     __tablename__ = "article"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String, nullable=False)
-    link: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    media_id: Mapped[int] = mapped_column(
+        ForeignKey("media.id", ondelete="RESTRICT"),
+        nullable=False
+    )
+    link: Mapped[str] = mapped_column(String, primary_key=True)
     featured_image_url: Mapped[str] = mapped_column(String, nullable=True)
     author: Mapped[str] = mapped_column(String, nullable=True)
     content: Mapped[str] = mapped_column(String)
     published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    dense_embedding: Mapped[list] = mapped_column(Vector(DENSE_DIM), default=None, nullable=True)
-    sparse_embedding: Mapped[list] = mapped_column(SPARSEVEC(VOCAB_SIZE), default=None, nullable=True)
+
+    cluster_id: Mapped[int] = mapped_column(
+        ForeignKey("cluster.id", onupdate="CASCADE", ondelete="SET NULL"),
+        nullable=True
+    )
     is_checked: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_relevant: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    cluster_id: Mapped[int] = mapped_column(ForeignKey("cluster.id"), nullable=True)
+    dense_embedding: Mapped[list] = mapped_column(Vector(DENSE_DIM), nullable=True)
+    sparse_embedding: Mapped[list] = mapped_column(SPARSEVEC(VOCAB_SIZE), nullable=True)
+
+    event_id: Mapped[int] = mapped_column(ForeignKey("event.id"), nullable=True)
+
     cluster: Mapped["Cluster"] = relationship(back_populates="articles")
-
-    media_id: Mapped[int] = mapped_column(ForeignKey("media.id"), nullable=True)
     media: Mapped["Media"] = relationship(back_populates="articles")
+    event: Mapped["Event"] = relationship(back_populates="articles")
 
     def __repr__(self):
         return "<Article %r, %r>" % (self.title, self.link)
-
