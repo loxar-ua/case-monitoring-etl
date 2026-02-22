@@ -14,4 +14,3 @@ class Media(Base):
 
     def __repr__(self):
         return "<Media %r>" % self.name
-

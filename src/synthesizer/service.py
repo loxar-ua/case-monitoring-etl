@@ -19,6 +19,7 @@ class ClusterAnalyzerService:
         cluster.is_relevant = rel_result.is_relevant
 
         if not cluster.is_relevant:
+            cluster.is_checked = True
             return False
 
         cluster.name = self.name_pipe.name_cluster(articles).name

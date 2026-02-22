@@ -1,8 +1,6 @@
-import logging
+from src.logger import logger
 from src.database.repository import ClusterRepository
 from src.synthesizer.service import ClusterAnalyzerService
-
-logger = logging.getLogger(__name__)
 
 class ClusterProcessingJob:
     def __init__(self, repo: ClusterRepository, analyzer: ClusterAnalyzerService, batch_commit: int = 10):
