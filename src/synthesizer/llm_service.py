@@ -1,31 +1,39 @@
 import json
-
-from llama_cpp import Llama
+import os
+from google import genai
+from google.genai import types
 
 from src.logger import logger
 
+
 class LLMService():
     def __init__(self):
-        self.llm = Llama(
-            model_path="./models/lapa-v0.1.2-instruct-Q4_K_M.gguf",
-            n_gpu_layers=28,
-            n_ctx=8192 # Make it higher if you would need.
-        )
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise ValueError("GEMINI_API_KEY is missing")
 
-    def get_response(self, query) -> dict | None:
-        response = self.llm.create_chat_completion(
-            messages=[{"role": "user", "content": query}],
-            response_format={
-                "type": "json_object",
-            }
-        )
+        self.client = genai.Client(api_key=api_key)
 
-        content_str = response["choices"][0]["message"]["content"]
-
+    def get_response(self, query: str) -> dict | None:
         try:
-            json_content =  json.loads(content_str)
-            logger.info(json_content)
+            logger.info(f"Passing query to llm: {query}")
+            response = self.client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=query,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                )
+            )
+
+            content_str = response.text
+            json_content = json.loads(content_str)
+
+            logger.info(f"Getting response from llm: {json_content}")
             return json_content
+
         except json.JSONDecodeError:
             logger.warning('LLM returned wrong json format')
+            return None
+        except Exception as e:
+            logger.error(f"API request failed: {e}")
             return None
