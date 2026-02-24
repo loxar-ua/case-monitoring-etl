@@ -1,8 +1,3 @@
-from src.clusterizer.run_clusterizer import run_clusterizer
-from src.scrapper.run_scrappers import run_scrappers
-from src.scrapper import SCRAPPER_DATE_CONFIG
-from src.embedder.run_encoder import run_encoder
-
 from src.database.session import get_session
 from src.database.repository import ClusterRepository
 from src.synthesizer.llm_service import LLMService

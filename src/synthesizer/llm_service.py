@@ -23,7 +23,9 @@ class LLMService():
         content_str = response["choices"][0]["message"]["content"]
 
         try:
-            return json.loads(content_str)
+            json_content =  json.loads(content_str)
+            logger.info(json_content)
+            return json_content
         except json.JSONDecodeError:
             logger.warning('LLM returned wrong json format')
             return None

@@ -19,6 +19,7 @@ class ClusterProcessingJob:
             try:
                 self.analyzer.analyze(cluster, cluster.articles, self.repo)
                 processed += 1
+                logger.info(f"Processed {cluster.id}")
 
                 if processed % self.batch_commit == 0:
                     self.repo.commit()

@@ -6,6 +6,7 @@ from src.synthesizer.relevancy.pipeline import RelevancyPipeline
 from src.synthesizer.name_cluster.pipeline import NamePipeline
 from src.synthesizer.cluster_category.pipeline import CategoryPipeline
 from src.synthesizer.event_segmenter.pipeline import EventPipeline
+from src.synthesizer.featured_image.pipeline import ImagePipeline
 
 class ClusterAnalyzerService:
     def __init__(self, llm_client: LLMService):
@@ -13,6 +14,7 @@ class ClusterAnalyzerService:
         self.name_pipe = NamePipeline(llm_client)
         self.cat_pipe = CategoryPipeline(llm_client)
         self.event_pipe = EventPipeline(llm_client)
+        self.image_pipe = ImagePipeline()
 
     def analyze(self, cluster: Cluster, articles: list[Article], repo: ClusterRepository) -> bool:
         rel_result = self.rel_pipe.relevancy(articles)
@@ -32,6 +34,8 @@ class ClusterAnalyzerService:
         event_result = self.event_pipe.segment_events(cluster.id, articles)
         article_map = {a.id: a for a in articles}
         repo.replace_cluster_events(cluster, event_result.events, article_map)
+
+        cluster.featured_image_url = self.image_pipe.get_latest_image_url(articles)
 
         cluster.is_checked = True
         return True

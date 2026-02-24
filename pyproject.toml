@@ -14,5 +14,6 @@ dependencies = [
     "scipy",
     "sqlalchemy",
     "testcontainers",
-    "llama-cpp-python"
+    "llama-cpp-python",
+    "torch>=2.10.0",
 ]
