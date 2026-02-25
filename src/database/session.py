@@ -5,18 +5,13 @@ from sqlalchemy import create_engine, Engine
 import os
 from functools import lru_cache
 
-from sqlalchemy.orm import sessionmaker
-
 @lru_cache(maxsize=None)
 def get_engine(url: str):
     return create_engine(url, echo=False, pool_size=5, max_overflow=10)
 
 def get_connection(url: str = None) -> Engine:
-    """Connects to the PostgreSQL database and returns the engine"""
     if url:
-        engine = create_engine(url, echo=True)
-
-        return engine
+        return create_engine(url, echo=True)
 
     load_dotenv()
     user = os.getenv("DATABASE_USER")
@@ -31,11 +26,12 @@ def get_connection(url: str = None) -> Engine:
 
     return get_engine(url)
 
+@lru_cache(maxsize=None)
+def get_session_maker(url: str = None):
+    engine = get_connection(url)
+    return sessionmaker(bind=engine)
+
 def get_session(url: str = None) -> Session:
     """Returns a new session from the existing engine pool"""
-    engine = get_connection(url)
-    Session = sessionmaker(bind=engine)
-    return Session()
-
-
-
+    SessionLocal = get_session_maker(url)
+    return SessionLocal()

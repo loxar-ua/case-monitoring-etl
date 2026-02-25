@@ -1,4 +1,6 @@
-from sqlalchemy import Integer, String, ForeignKey
+from datetime import datetime
+
+from sqlalchemy import Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -9,6 +11,8 @@ class Event(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String, nullable=True)
     description: Mapped[str] = mapped_column(String, nullable=True)
+    date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
 
     cluster_id: Mapped[int] = mapped_column(
         ForeignKey("cluster.id", ondelete="CASCADE"),

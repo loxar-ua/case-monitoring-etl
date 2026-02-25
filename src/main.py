@@ -14,7 +14,6 @@ def main():
         job = ClusterProcessingJob(
             repo=repo,
             analyzer=analyzer_service,
-            batch_commit=10
         )
 
         job.run()

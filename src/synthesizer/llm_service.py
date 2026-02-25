@@ -1,10 +1,13 @@
 import json
 import os
+
+from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
 from src.logger import logger
 
+load_dotenv()
 
 class LLMService():
     def __init__(self):

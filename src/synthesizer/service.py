@@ -2,38 +2,32 @@ from src.database.models.cluster import Cluster
 from src.database.models.article import Article
 from src.database.repository import ClusterRepository
 from src.synthesizer.llm_service import LLMService
-from src.synthesizer.relevancy.pipeline import RelevancyPipeline
-from src.synthesizer.name_cluster.pipeline import NamePipeline
-from src.synthesizer.cluster_category.pipeline import CategoryPipeline
-from src.synthesizer.event_segmenter.pipeline import EventPipeline
+from src.synthesizer.unified_analyzer.pipeline import UnifiedAnalyzerPipeline
 from src.synthesizer.featured_image.pipeline import ImagePipeline
+
 
 class ClusterAnalyzerService:
     def __init__(self, llm_client: LLMService):
-        self.rel_pipe = RelevancyPipeline(llm_client)
-        self.name_pipe = NamePipeline(llm_client)
-        self.cat_pipe = CategoryPipeline(llm_client)
-        self.event_pipe = EventPipeline(llm_client)
+        self.unified_pipe = UnifiedAnalyzerPipeline(llm_client)
         self.image_pipe = ImagePipeline()
 
     def analyze(self, cluster: Cluster, articles: list[Article], repo: ClusterRepository) -> bool:
-        rel_result = self.rel_pipe.relevancy(articles)
-        cluster.is_relevant = rel_result.is_relevant
+        analysis_result = self.unified_pipe.analyze_cluster(articles)
+
+        cluster.is_relevant = analysis_result.is_relevant
 
         if not cluster.is_relevant:
             cluster.is_checked = True
             return False
 
-        cluster.name = self.name_pipe.name_cluster(articles).name
+        cluster.name = analysis_result.name
 
-        cat_result = self.cat_pipe.categorize_cluster(articles)
         cluster.categories.clear()
-        for cat_name in cat_result.categories:
+        for cat_name in analysis_result.categories:
             cluster.categories.append(repo.get_or_create_category(cat_name))
 
-        event_result = self.event_pipe.segment_events(cluster.id, articles)
         article_map = {a.id: a for a in articles}
-        repo.replace_cluster_events(cluster, event_result.events, article_map)
+        repo.replace_cluster_events(cluster, analysis_result.events, article_map)
 
         cluster.featured_image_url = self.image_pipe.get_latest_image_url(articles)
 

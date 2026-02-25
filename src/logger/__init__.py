@@ -1,10 +1,10 @@
 import logging
+import sys
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
 from pathlib import Path
 
 now = datetime.now()
-
 this_file_path = Path(__file__)
 
 # __init__ -> logger -> src -> case-monintor-etl
@@ -13,7 +13,6 @@ repo_path = this_file_path.parent.parent.parent
 # Folder for logs: log/YYYY/MM
 log_path = repo_path / 'log' / str(now.year) / f"{now.month:02d}"
 log_path.mkdir(parents=True, exist_ok=True)
-
 
 formatter = logging.Formatter(
     fmt='%(asctime)s - %(levelname)s - %(message)s',
@@ -29,8 +28,13 @@ file_handler = TimedRotatingFileHandler(
 )
 file_handler.setFormatter(formatter)
 
+# Create a handler for terminal output
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(formatter)
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 logger.addHandler(file_handler)
+logger.addHandler(console_handler) # Attach terminal handler to the root logger
 
 logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
