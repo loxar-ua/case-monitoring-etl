@@ -6,7 +6,8 @@ from datetime import datetime
 
 from .base import Base
 
-from src.embedder import DENSE_DIM, VOCAB_SIZE
+DENSE_DIM = 1024
+VOCAB_SIZE = 250002
 
 
 class Article(Base):

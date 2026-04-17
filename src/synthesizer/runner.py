@@ -4,7 +4,7 @@ from src.synthesizer.service import ClusterAnalyzerService
 
 
 class ClusterProcessingJob:
-    def __init__(self, repo: ClusterRepository, analyzer: ClusterAnalyzerService, batch_size: int = 50):
+    def __init__(self, repo: ClusterRepository, analyzer: ClusterAnalyzerService, batch_size: int = 5):
         self.repo = repo
         self.analyzer = analyzer
         self.batch_size = batch_size
